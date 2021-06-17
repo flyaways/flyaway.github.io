@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="RFC 9002QUIC Loss Detection and Congestion ControlAbstractThis document describes loss detection and congestion control mechanisms forQUIC.¶ Status of This Memo        This is an Internet Standards Tr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rfc9002">
+<meta property="og:url" content="https://flyaways.github.io/2021/06/18/rfc9002/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="RFC 9002QUIC Loss Detection and Congestion ControlAbstractThis document describes loss detection and congestion control mechanisms forQUIC.¶ Status of This Memo        This is an Internet Standards Tr">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-06-17T18:11:11.000Z">
+<meta property="article:modified_time" content="2021-06-17T19:13:04.935Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>rfc9002</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/lib/meslo-LG/styles.css">
+
+    
+<link rel="stylesheet" href="/lib/justified-gallery/justifiedGallery.min.css">
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- rss -->
+    
+    
+    <!-- jquery -->
+    
+<script src="/lib/jquery/jquery.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+    <div class="banner">
+<div id="blogtitel" class="blogtitel">Hexo</div>
+<ul id="wrapper" class="wrapper">
+  <div class="sun">
+    <div class="star"></div>
+  </div>
+  <div class="mercury">
+    <div class="planet">
+      <div class="shadow"></div>
+    </div>
+  </div>
+  <div class="venus">
+    <div class="planet">
+      <div class="shadow"></div>
+    </div>
+  </div>
+  <div class="earth">
+    <div class="planet"><div class="shadow"></div></div>
+  </div>
+  <div class="mars">
+    <div class="planet"><div class="shadow"></div></div>
+  </div>
+  <div class="jupiter">
+    <div class="planet"><div class="shadow"></div></div>
+  </div>
+</ul>
+</div>
+
+    <div class="background">
+      
+        <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="https://flyaways.github.io/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://flyaways.github.io/">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2021/06/18/about/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover='$("#i-next").toggle();' onmouseout='$("#i-next").toggle();'></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover='$("#i-top").toggle();' onmouseout='$("#i-top").toggle();'></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover='$("#i-share").toggle();' onmouseout='$("#i-share").toggle();' onclick='$("#share").toggle();return false;'></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://flyaways.github.io/2021/06/18/rfc9002/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://flyaways.github.io/2021/06/18/rfc9002/&text=rfc9002"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://flyaways.github.io/2021/06/18/rfc9002/&title=rfc9002"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://flyaways.github.io/2021/06/18/rfc9002/&is_video=false&description=rfc9002"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=rfc9002&body=Check out this article: https://flyaways.github.io/2021/06/18/rfc9002/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://flyaways.github.io/2021/06/18/rfc9002/&title=rfc9002"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://flyaways.github.io/2021/06/18/rfc9002/&title=rfc9002"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://flyaways.github.io/2021/06/18/rfc9002/&title=rfc9002"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://flyaways.github.io/2021/06/18/rfc9002/&title=rfc9002"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://flyaways.github.io/2021/06/18/rfc9002/&name=rfc9002&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RFC-9002"><span class="toc-number">1.</span> <span class="toc-text">RFC 9002</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#QUIC-Loss-Detection-and-Congestion-Control"><span class="toc-number">2.</span> <span class="toc-text">QUIC Loss Detection and Congestion Control</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Abstract"><span class="toc-number">2.1.</span> <span class="toc-text">Abstract</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Status-of-This-Memo"><span class="toc-number">2.2.</span> <span class="toc-text">Status of This Memo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Copyright-Notice"><span class="toc-number">2.3.</span> <span class="toc-text">Copyright Notice</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Table-of-Contents"><span class="toc-number">2.4.</span> <span class="toc-text">Table of Contents</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Introduction"><span class="toc-number">2.5.</span> <span class="toc-text">1. Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Conventions-and-Definitions"><span class="toc-number">2.6.</span> <span class="toc-text">2. Conventions and Definitions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Design-of-the-QUIC-Transmission-Machinery"><span class="toc-number">2.7.</span> <span class="toc-text">3. Design of the QUIC Transmission Machinery</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Relevant-Differences-between-QUIC-and-TCP"><span class="toc-number">2.8.</span> <span class="toc-text">4. Relevant Differences between QUIC and TCP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-Separate-Packet-Number-Spaces"><span class="toc-number">2.8.1.</span> <span class="toc-text">4.1. Separate Packet Number Spaces</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Monotonically-Increasing-Packet-Numbers"><span class="toc-number">2.8.2.</span> <span class="toc-text">4.2. Monotonically Increasing Packet Numbers</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-Clearer-Loss-Epoch"><span class="toc-number">2.8.3.</span> <span class="toc-text">4.3. Clearer Loss Epoch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-No-Reneging"><span class="toc-number">2.8.4.</span> <span class="toc-text">4.4. No Reneging</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-More-ACK-Ranges"><span class="toc-number">2.8.5.</span> <span class="toc-text">4.5. More ACK Ranges</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-6-Explicit-Correction-for-Delayed-Acknowledgments"><span class="toc-number">2.8.6.</span> <span class="toc-text">4.6. Explicit Correction for Delayed Acknowledgments</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-7-Probe-Timeout-Replaces-RTO-and-TLP"><span class="toc-number">2.8.7.</span> <span class="toc-text">4.7. Probe Timeout Replaces RTO and TLP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-8-The-Minimum-Congestion-Window-Is-Two-Packets"><span class="toc-number">2.8.8.</span> <span class="toc-text">4.8. The Minimum Congestion Window Is Two Packets</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-9-Handshake-Packets-Are-Not-Special"><span class="toc-number">2.8.9.</span> <span class="toc-text">4.9. Handshake Packets Are Not Special</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Estimating-the-Round-Trip-Time"><span class="toc-number">2.9.</span> <span class="toc-text">5. Estimating the Round-Trip Time</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-Generating-RTT-Samples"><span class="toc-number">2.9.1.</span> <span class="toc-text">5.1. Generating RTT Samples</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-Estimating-min-rtt"><span class="toc-number">2.9.2.</span> <span class="toc-text">5.2. Estimating min_rtt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-Estimating-smoothed-rtt-and-rttvar"><span class="toc-number">2.9.3.</span> <span class="toc-text">5.3. Estimating smoothed_rtt and rttvar</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Loss-Detection"><span class="toc-number">2.10.</span> <span class="toc-text">6. Loss Detection</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-Acknowledgment-Based-Detection"><span class="toc-number">2.10.1.</span> <span class="toc-text">6.1. Acknowledgment-Based Detection</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1-1-Packet-Threshold"><span class="toc-number">2.10.1.1.</span> <span class="toc-text">6.1.1. Packet Threshold</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1-2-Time-Threshold"><span class="toc-number">2.10.1.2.</span> <span class="toc-text">6.1.2. Time Threshold</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-Probe-Timeout"><span class="toc-number">2.10.2.</span> <span class="toc-text">6.2. Probe Timeout</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-1-Computing-PTO"><span class="toc-number">2.10.2.1.</span> <span class="toc-text">6.2.1. Computing PTO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-2-Handshakes-and-New-Paths"><span class="toc-number">2.10.2.2.</span> <span class="toc-text">6.2.2. Handshakes and New Paths</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#6-2-2-1-Before-Address-Validation"><span class="toc-number">2.10.2.2.1.</span> <span class="toc-text">6.2.2.1. Before Address Validation</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-3-Speeding-up-Handshake-Completion"><span class="toc-number">2.10.2.3.</span> <span class="toc-text">6.2.3. Speeding up Handshake Completion</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-4-Sending-Probe-Packets"><span class="toc-number">2.10.2.4.</span> <span class="toc-text">6.2.4. Sending Probe Packets</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-Handling-Retry-Packets"><span class="toc-number">2.10.3.</span> <span class="toc-text">6.3. Handling Retry Packets</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-Discarding-Keys-and-Packet-State"><span class="toc-number">2.10.4.</span> <span class="toc-text">6.4. Discarding Keys and Packet State</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-Congestion-Control"><span class="toc-number">2.11.</span> <span class="toc-text">7. Congestion Control</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-Explicit-Congestion-Notification"><span class="toc-number">2.11.1.</span> <span class="toc-text">7.1. Explicit Congestion Notification</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-Initial-and-Minimum-Congestion-Window"><span class="toc-number">2.11.2.</span> <span class="toc-text">7.2. Initial and Minimum Congestion Window</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-Congestion-Control-States"><span class="toc-number">2.11.3.</span> <span class="toc-text">7.3. Congestion Control States</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-3-1-Slow-Start"><span class="toc-number">2.11.3.1.</span> <span class="toc-text">7.3.1. Slow Start</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-3-2-Recovery"><span class="toc-number">2.11.3.2.</span> <span class="toc-text">7.3.2. Recovery</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-3-3-Congestion-Avoidance"><span class="toc-number">2.11.3.3.</span> <span class="toc-text">7.3.3. Congestion Avoidance</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-4-Ignoring-Loss-of-Undecryptable-Packets"><span class="toc-number">2.11.4.</span> <span class="toc-text">7.4. Ignoring Loss of Undecryptable Packets</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-5-Probe-Timeout"><span class="toc-number">2.11.5.</span> <span class="toc-text">7.5. Probe Timeout</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-6-Persistent-Congestion"><span class="toc-number">2.11.6.</span> <span class="toc-text">7.6. Persistent Congestion</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-6-1-Duration"><span class="toc-number">2.11.6.1.</span> <span class="toc-text">7.6.1. Duration</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-6-2-Establishing-Persistent-Congestion"><span class="toc-number">2.11.6.2.</span> <span class="toc-text">7.6.2. Establishing Persistent Congestion</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-6-3-Example"><span class="toc-number">2.11.6.3.</span> <span class="toc-text">7.6.3. Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-7-Pacing"><span class="toc-number">2.11.7.</span> <span class="toc-text">7.7. Pacing</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-8-Underutilizing-the-Congestion-Window"><span class="toc-number">2.11.8.</span> <span class="toc-text">7.8. Underutilizing the Congestion Window</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-Security-Considerations"><span class="toc-number">2.12.</span> <span class="toc-text">8. Security Considerations</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-Loss-and-Congestion-Signals"><span class="toc-number">2.12.1.</span> <span class="toc-text">8.1. Loss and Congestion Signals</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-Traffic-Analysis"><span class="toc-number">2.12.2.</span> <span class="toc-text">8.2. Traffic Analysis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-Misreporting-ECN-Markings"><span class="toc-number">2.12.3.</span> <span class="toc-text">8.3. Misreporting ECN Markings</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-References"><span class="toc-number">2.13.</span> <span class="toc-text">9. References</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-Normative-References"><span class="toc-number">2.13.1.</span> <span class="toc-text">9.1. Normative References</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-Informative-References"><span class="toc-number">2.13.2.</span> <span class="toc-text">9.2. Informative References</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Appendix-A-Loss-Recovery-Pseudocode"><span class="toc-number">2.14.</span> <span class="toc-text">Appendix A. Loss Recovery Pseudocode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-1-Tracking-Sent-Packets"><span class="toc-number">2.15.</span> <span class="toc-text">A.1. Tracking Sent Packets</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-1-1-Sent-Packet-Fields"><span class="toc-number">2.15.1.</span> <span class="toc-text">A.1.1. Sent Packet Fields</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-2-Constants-of-Interest"><span class="toc-number">2.16.</span> <span class="toc-text">A.2. Constants of Interest</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-3-Variables-of-Interest"><span class="toc-number">2.17.</span> <span class="toc-text">A.3. Variables of Interest</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-4-Initialization"><span class="toc-number">2.18.</span> <span class="toc-text">A.4. Initialization</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-5-On-Sending-a-Packet"><span class="toc-number">2.19.</span> <span class="toc-text">A.5. On Sending a Packet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-6-On-Receiving-a-Datagram"><span class="toc-number">2.20.</span> <span class="toc-text">A.6. On Receiving a Datagram</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-7-On-Receiving-an-Acknowledgment"><span class="toc-number">2.21.</span> <span class="toc-text">A.7. On Receiving an Acknowledgment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-8-Setting-the-Loss-Detection-Timer"><span class="toc-number">2.22.</span> <span class="toc-text">A.8. Setting the Loss Detection Timer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-9-On-Timeout"><span class="toc-number">2.23.</span> <span class="toc-text">A.9. On Timeout</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-10-Detecting-Lost-Packets"><span class="toc-number">2.24.</span> <span class="toc-text">A.10. Detecting Lost Packets</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-11-Upon-Dropping-Initial-or-Handshake-Keys"><span class="toc-number">2.25.</span> <span class="toc-text">A.11. Upon Dropping Initial or Handshake Keys</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Appendix-B-Congestion-Control-Pseudocode"><span class="toc-number">2.26.</span> <span class="toc-text">Appendix B. Congestion Control Pseudocode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-1-Constants-of-Interest"><span class="toc-number">2.27.</span> <span class="toc-text">B.1. Constants of Interest</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-2-Variables-of-Interest"><span class="toc-number">2.28.</span> <span class="toc-text">B.2. Variables of Interest</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-3-Initialization"><span class="toc-number">2.29.</span> <span class="toc-text">B.3. Initialization</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-4-On-Packet-Sent"><span class="toc-number">2.30.</span> <span class="toc-text">B.4. On Packet Sent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-5-On-Packet-Acknowledgment"><span class="toc-number">2.31.</span> <span class="toc-text">B.5. On Packet Acknowledgment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-6-On-New-Congestion-Event"><span class="toc-number">2.32.</span> <span class="toc-text">B.6. On New Congestion Event</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-7-Process-ECN-Information"><span class="toc-number">2.33.</span> <span class="toc-text">B.7. Process ECN Information</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-8-On-Packets-Lost"><span class="toc-number">2.34.</span> <span class="toc-text">B.8. On Packets Lost</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-9-Removing-Discarded-Packets-from-Bytes-in-Flight"><span class="toc-number">2.35.</span> <span class="toc-text">B.9. Removing Discarded Packets from Bytes in Flight</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Contributors"><span class="toc-number">2.36.</span> <span class="toc-text">Contributors</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Authors%E2%80%99-Addresses"><span class="toc-number">2.37.</span> <span class="toc-text">Authors’ Addresses</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+      
+      <div class="content index width mx-auto px2 my4">
+          
+          <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        rfc9002
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Hexo</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2021-06-17T18:11:11.000Z" itemprop="datePublished">2021-06-18</time>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="RFC-9002"><a href="#RFC-9002" class="headerlink" title="RFC 9002"></a>RFC 9002</h1><h1 id="QUIC-Loss-Detection-and-Congestion-Control"><a href="#QUIC-Loss-Detection-and-Congestion-Control" class="headerlink" title="QUIC Loss Detection and Congestion Control"></a>QUIC Loss Detection and Congestion Control</h1><h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a><a href="#abstract">Abstract</a></h2><p>This document describes loss detection and congestion control mechanisms for<br>QUIC.<a href="#section-abstract-1">¶</a></p>
+<h2 id="Status-of-This-Memo"><a href="#Status-of-This-Memo" class="headerlink" title="Status of This Memo"></a><a href="#name-status-of-this-memo">Status of This Memo</a></h2><pre><code>        This is an Internet Standards Track document.[¶](#section-boilerplate.1-1)
+
+        This document is a product of the Internet Engineering Task Force
+        (IETF).  It represents the consensus of the IETF community.  It has
+        received public review and has been approved for publication by
+        the Internet Engineering Steering Group (IESG).  Further
+        information on Internet Standards is available in Section 2 of 
+        RFC 7841.[¶](#section-boilerplate.1-2)
+
+        Information about the current status of this document, any
+        errata, and how to provide feedback on it may be obtained at
+        [https://www.rfc-editor.org/info/rfc9002](https://www.rfc-editor.org/info/rfc9002).[¶](#section-boilerplate.1-3)
+</code></pre>
+<h2 id="Copyright-Notice"><a href="#Copyright-Notice" class="headerlink" title="Copyright Notice"></a><a href="#name-copyright-notice">Copyright Notice</a></h2><pre><code>        Copyright (c) 2021 IETF Trust and the persons identified as the
+        document authors. All rights reserved.[¶](#section-boilerplate.2-1)
+
+        This document is subject to BCP 78 and the IETF Trust&#39;s Legal
+        Provisions Relating to IETF Documents
+        ([https://trustee.ietf.org/license-info](https://trustee.ietf.org/license-info)) in effect on the date of
+        publication of this document. Please review these documents
+        carefully, as they describe your rights and restrictions with
+        respect to this document. Code Components extracted from this
+        document must include Simplified BSD License text as described in
+        Section 4.e of the Trust Legal Provisions and are provided without
+        warranty as described in the Simplified BSD License.[¶](#section-boilerplate.2-2)
+</code></pre>
+<p><a href="#">▲</a></p>
+<h2 id="Table-of-Contents"><a href="#Table-of-Contents" class="headerlink" title="Table of Contents"></a><a href="#name-table-of-contents">Table of Contents</a></h2><ul>
+<li><p><a href="#section-1">1</a>.  <a href="#name-introduction">Introduction</a></p>
+</li>
+<li><p><a href="#section-2">2</a>.  <a href="#name-conventions-and-definitions">Conventions and Definitions</a></p>
+</li>
+<li><p><a href="#section-3">3</a>.  <a href="#name-design-of-the-quic-transmis">Design of the QUIC Transmission Machinery</a></p>
+</li>
+<li><p><a href="#section-4">4</a>.  <a href="#name-relevant-differences-betwee">Relevant Differences between QUIC and TCP</a></p>
+</li>
+<li><p><a href="#section-4.1">4.1</a>.  <a href="#name-separate-packet-number-spac">Separate Packet Number Spaces</a></p>
+</li>
+<li><p><a href="#section-4.2">4.2</a>.  <a href="#name-monotonically-increasing-pa">Monotonically Increasing Packet Numbers</a></p>
+</li>
+<li><p><a href="#section-4.3">4.3</a>.  <a href="#name-clearer-loss-epoch">Clearer Loss Epoch</a></p>
+</li>
+<li><p><a href="#section-4.4">4.4</a>.  <a href="#name-no-reneging">No Reneging</a></p>
+</li>
+<li><p><a href="#section-4.5">4.5</a>.  <a href="#name-more-ack-ranges">More ACK Ranges</a></p>
+</li>
+<li><p><a href="#section-4.6">4.6</a>.  <a href="#name-explicit-correction-for-del">Explicit Correction for Delayed Acknowledgments</a></p>
+</li>
+<li><p><a href="#section-4.7">4.7</a>.  <a href="#name-probe-timeout-replaces-rto-">Probe Timeout Replaces RTO and TLP</a></p>
+</li>
+<li><p><a href="#section-4.8">4.8</a>.  <a href="#name-the-minimum-congestion-wind">The Minimum Congestion Window Is Two Packets</a></p>
+</li>
+<li><p><a href="#section-4.9">4.9</a>.  <a href="#name-handshake-packets-are-not-s">Handshake Packets Are Not Special</a></p>
+</li>
+<li><p><a href="#section-5">5</a>.  <a href="#name-estimating-the-round-trip-t">Estimating the Round-Trip Time</a></p>
+</li>
+<li><p><a href="#section-5.1">5.1</a>.  <a href="#name-generating-rtt-samples">Generating RTT Samples</a></p>
+</li>
+<li><p><a href="#section-5.2">5.2</a>.  <a href="#name-estimating-min_rtt">Estimating min_rtt</a></p>
+</li>
+<li><p><a href="#section-5.3">5.3</a>.  <a href="#name-estimating-smoothed_rtt-and">Estimating smoothed_rtt and rttvar</a></p>
+</li>
+<li><p><a href="#section-6">6</a>.  <a href="#name-loss-detection">Loss Detection</a></p>
+</li>
+<li><p><a href="#section-6.1">6.1</a>.  <a href="#name-acknowledgment-based-detect">Acknowledgment-Based Detection</a></p>
+</li>
+<li><p><a href="#section-6.1.1">6.1.1</a>.  <a href="#name-packet-threshold">Packet Threshold</a></p>
+</li>
+<li><p><a href="#section-6.1.2">6.1.2</a>.  <a href="#name-time-threshold">Time Threshold</a></p>
+</li>
+<li><p><a href="#section-6.2">6.2</a>.  <a href="#name-probe-timeout">Probe Timeout</a></p>
+</li>
+<li><p><a href="#section-6.2.1">6.2.1</a>.  <a href="#name-computing-pto">Computing PTO</a></p>
+</li>
+<li><p><a href="#section-6.2.2">6.2.2</a>.  <a href="#name-handshakes-and-new-paths">Handshakes and New Paths</a></p>
+</li>
+<li><p><a href="#section-6.2.3">6.2.3</a>.  <a href="#name-speeding-up-handshake-compl">Speeding up Handshake Completion</a></p>
+</li>
+<li><p><a href="#section-6.2.4">6.2.4</a>.  <a href="#name-sending-probe-packets">Sending Probe Packets</a></p>
+</li>
+<li><p><a href="#section-6.3">6.3</a>.  <a href="#name-handling-retry-packets">Handling Retry Packets</a></p>
+</li>
+<li><p><a href="#section-6.4">6.4</a>.  <a href="#name-discarding-keys-and-packet-">Discarding Keys and Packet State</a></p>
+</li>
+<li><p><a href="#section-7">7</a>.  <a href="#name-congestion-control">Congestion Control</a></p>
+</li>
+<li><p><a href="#section-7.1">7.1</a>.  <a href="#name-explicit-congestion-notific">Explicit Congestion Notification</a></p>
+</li>
+<li><p><a href="#section-7.2">7.2</a>.  <a href="#name-initial-and-minimum-congest">Initial and Minimum Congestion Window</a></p>
+</li>
+<li><p><a href="#section-7.3">7.3</a>.  <a href="#name-congestion-control-states">Congestion Control States</a></p>
+</li>
+<li><p><a href="#section-7.3.1">7.3.1</a>.  <a href="#name-slow-start">Slow Start</a></p>
+</li>
+<li><p><a href="#section-7.3.2">7.3.2</a>.  <a href="#name-recovery">Recovery</a></p>
+</li>
+<li><p><a href="#section-7.3.3">7.3.3</a>.  <a href="#name-congestion-avoidance">Congestion Avoidance</a></p>
+</li>
+<li><p><a href="#section-7.4">7.4</a>.  <a href="#name-ignoring-loss-of-undecrypta">Ignoring Loss of Undecryptable Packets</a></p>
+</li>
+<li><p><a href="#section-7.5">7.5</a>.  <a href="#name-probe-timeout-2">Probe Timeout</a></p>
+</li>
+<li><p><a href="#section-7.6">7.6</a>.  <a href="#name-persistent-congestion">Persistent Congestion</a></p>
+</li>
+<li><p><a href="#section-7.6.1">7.6.1</a>.  <a href="#name-duration">Duration</a></p>
+</li>
+<li><p><a href="#section-7.6.2">7.6.2</a>.  <a href="#name-establishing-persistent-con">Establishing Persistent Congestion</a></p>
+</li>
+<li><p><a href="#section-7.6.3">7.6.3</a>.  <a href="#name-example">Example</a></p>
+</li>
+<li><p><a href="#section-7.7">7.7</a>.  <a href="#name-pacing">Pacing</a></p>
+</li>
+<li><p><a href="#section-7.8">7.8</a>.  <a href="#name-underutilizing-the-congesti">Underutilizing the Congestion Window</a></p>
+</li>
+<li><p><a href="#section-8">8</a>.  <a href="#name-security-considerations">Security Considerations</a></p>
+</li>
+<li><p><a href="#section-8.1">8.1</a>.  <a href="#name-loss-and-congestion-signals">Loss and Congestion Signals</a></p>
+</li>
+<li><p><a href="#section-8.2">8.2</a>.  <a href="#name-traffic-analysis">Traffic Analysis</a></p>
+</li>
+<li><p><a href="#section-8.3">8.3</a>.  <a href="#name-misreporting-ecn-markings">Misreporting ECN Markings</a></p>
+</li>
+<li><p><a href="#section-9">9</a>.  <a href="#name-references">References</a></p>
+</li>
+<li><p><a href="#section-9.1">9.1</a>.  <a href="#name-normative-references">Normative References</a></p>
+</li>
+<li><p><a href="#section-9.2">9.2</a>.  <a href="#name-informative-references">Informative References</a></p>
+</li>
+<li><p><a href="#section-appendix.a">Appendix A</a>.  <a href="#name-loss-recovery-pseudocode">Loss Recovery Pseudocode</a></p>
+</li>
+<li><p><a href="#section-a.1">A.1</a>.  <a href="#name-tracking-sent-packets">Tracking Sent Packets</a></p>
+</li>
+<li><p><a href="#section-a.1.1">A.1.1</a>.  <a href="#name-sent-packet-fields">Sent Packet Fields</a></p>
+</li>
+<li><p><a href="#section-a.2">A.2</a>.  <a href="#name-constants-of-interest">Constants of Interest</a></p>
+</li>
+<li><p><a href="#section-a.3">A.3</a>.  <a href="#name-variables-of-interest">Variables of Interest</a></p>
+</li>
+<li><p><a href="#section-a.4">A.4</a>.  <a href="#name-initialization">Initialization</a></p>
+</li>
+<li><p><a href="#section-a.5">A.5</a>.  <a href="#name-on-sending-a-packet">On Sending a Packet</a></p>
+</li>
+<li><p><a href="#section-a.6">A.6</a>.  <a href="#name-on-receiving-a-datagram">On Receiving a Datagram</a></p>
+</li>
+<li><p><a href="#section-a.7">A.7</a>.  <a href="#name-on-receiving-an-acknowledgm">On Receiving an Acknowledgment</a></p>
+</li>
+<li><p><a href="#section-a.8">A.8</a>.  <a href="#name-setting-the-loss-detection-">Setting the Loss Detection Timer</a></p>
+</li>
+<li><p><a href="#section-a.9">A.9</a>.  <a href="#name-on-timeout">On Timeout</a></p>
+</li>
+<li><p><a href="#section-a.10">A.10</a>. <a href="#name-detecting-lost-packets">Detecting Lost Packets</a></p>
+</li>
+<li><p><a href="#section-a.11">A.11</a>. <a href="#name-upon-dropping-initial-or-ha">Upon Dropping Initial or Handshake Keys</a></p>
+</li>
+<li><p><a href="#section-appendix.b">Appendix B</a>.  <a href="#name-congestion-control-pseudoco">Congestion Control Pseudocode</a></p>
+</li>
+<li><p><a href="#section-b.1">B.1</a>.  <a href="#name-constants-of-interest-2">Constants of Interest</a></p>
+</li>
+<li><p><a href="#section-b.2">B.2</a>.  <a href="#name-variables-of-interest-2">Variables of Interest</a></p>
+</li>
+<li><p><a href="#section-b.3">B.3</a>.  <a href="#name-initialization-2">Initialization</a></p>
+</li>
+<li><p><a href="#section-b.4">B.4</a>.  <a href="#name-on-packet-sent">On Packet Sent</a></p>
+</li>
+<li><p><a href="#section-b.5">B.5</a>.  <a href="#name-on-packet-acknowledgment">On Packet Acknowledgment</a></p>
+</li>
+<li><p><a href="#section-b.6">B.6</a>.  <a href="#name-on-new-congestion-event">On New Congestion Event</a></p>
+</li>
+<li><p><a href="#section-b.7">B.7</a>.  <a href="#name-process-ecn-information">Process ECN Information</a></p>
+</li>
+<li><p><a href="#section-b.8">B.8</a>.  <a href="#name-on-packets-lost">On Packets Lost</a></p>
+</li>
+<li><p><a href="#section-b.9">B.9</a>.  <a href="#name-removing-discarded-packets-">Removing Discarded Packets from Bytes in Flight</a></p>
+</li>
+<li><p><a href="#section-appendix.c">#section-appendix.c</a><a href="#name-contributors">Contributors</a></p>
+</li>
+<li><p><a href="#section-appendix.d">#section-appendix.d</a><a href="#name-authors-addresses">Authors’ Addresses</a></p>
+</li>
+</ul>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a><a href="#section-1">1. </a><a href="#name-introduction">Introduction</a></h2><p>QUIC is a secure, general-purpose transport protocol, described in<br>[<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>]. This document describes loss detection and congestion<br>control mechanisms for QUIC.<a href="#section-1-1">¶</a></p>
+<h2 id="2-Conventions-and-Definitions"><a href="#2-Conventions-and-Definitions" class="headerlink" title="2. Conventions and Definitions"></a><a href="#section-2">2. </a><a href="#name-conventions-and-definitions">Conventions and Definitions</a></h2><p>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”,<br>“SHOULD NOT”, “RECOMMENDED”, “NOT RECOMMENDED”, “MAY”, and “OPTIONAL” in this<br>document are to be interpreted as described in BCP 14 [<a href="#RFC2119">RFC2119</a>][<a href="#RFC8174">RFC8174</a>]<br>when, and only when, they appear in all capitals, as shown here.<a href="#section-2-1">¶</a></p>
+<p>Definitions of terms that are used in this document:<a href="#section-2-2">¶</a><br>Ack-eliciting frames:<br>All frames other than ACK, PADDING, and CONNECTION_CLOSE are considered<br>ack-eliciting.<a href="#section-2-3.2.1">¶</a><br>Ack-eliciting packets:<br>Packets that contain ack-eliciting frames elicit an ACK from the receiver<br>within the maximum acknowledgment delay and are called ack-eliciting packets.<a href="#section-2-3.4.1">¶</a><br>In-flight packets:<br>Packets are considered in flight when they are ack-eliciting or contain a<br>PADDING frame, and they have been sent but are not acknowledged, declared<br>lost, or discarded along with old keys.<a href="#section-2-3.6.1">¶</a></p>
+<h2 id="3-Design-of-the-QUIC-Transmission-Machinery"><a href="#3-Design-of-the-QUIC-Transmission-Machinery" class="headerlink" title="3. Design of the QUIC Transmission Machinery"></a><a href="#section-3">3. </a><a href="#name-design-of-the-quic-transmis">Design of the QUIC Transmission Machinery</a></h2><p>All transmissions in QUIC are sent with a packet-level header, which indicates<br>the encryption level and includes a packet sequence number (referred to below as<br>a packet number).  The encryption level indicates the packet number space, as<br>described in <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-12.3">Section 12.3</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>].  Packet numbers never repeat<br>within a packet number space for the lifetime of a connection.  Packet numbers<br>are sent in monotonically increasing order within a space, preventing ambiguity.<br>It is permitted for some packet numbers to never be used, leaving intentional<br>gaps.<a href="#section-3-1">¶</a></p>
+<p>This design obviates the need for disambiguating between transmissions and<br>retransmissions; this eliminates significant complexity from QUIC’s<br>interpretation of TCP loss detection mechanisms.<a href="#section-3-2">¶</a></p>
+<p>QUIC packets can contain multiple frames of different types. The recovery<br>mechanisms ensure that data and frames that need reliable delivery are<br>acknowledged or declared lost and sent in new packets as necessary. The types<br>of frames contained in a packet affect recovery and congestion control logic:<a href="#section-3-3">¶</a></p>
+<ul>
+<li>All packets are acknowledged, though packets that contain no<br>ack-eliciting frames are only acknowledged along with ack-eliciting<br>packets.<a href="#section-3-4.1">¶</a></li>
+<li>Long header packets that contain CRYPTO frames are critical to the<br>performance of the QUIC handshake and use shorter timers for<br>acknowledgment.<a href="#section-3-4.2">¶</a></li>
+<li>Packets containing frames besides ACK or CONNECTION_CLOSE frames count toward<br>congestion control limits and are considered to be in flight.<a href="#section-3-4.3">¶</a></li>
+<li>PADDING frames cause packets to contribute toward bytes in flight without<br>directly causing an acknowledgment to be sent.<a href="#section-3-4.4">¶</a></li>
+</ul>
+<h2 id="4-Relevant-Differences-between-QUIC-and-TCP"><a href="#4-Relevant-Differences-between-QUIC-and-TCP" class="headerlink" title="4. Relevant Differences between QUIC and TCP"></a><a href="#section-4">4. </a><a href="#name-relevant-differences-betwee">Relevant Differences between QUIC and TCP</a></h2><p>Readers familiar with TCP’s loss detection and congestion control will find<br>algorithms here that parallel well-known TCP ones. However, protocol differences<br>between QUIC and TCP contribute to algorithmic differences. These protocol<br>differences are briefly described below.<a href="#section-4-1">¶</a></p>
+<h3 id="4-1-Separate-Packet-Number-Spaces"><a href="#4-1-Separate-Packet-Number-Spaces" class="headerlink" title="4.1. Separate Packet Number Spaces"></a><a href="#section-4.1">4.1. </a><a href="#name-separate-packet-number-spac">Separate Packet Number Spaces</a></h3><p>QUIC uses separate packet number spaces for each encryption level,<br>except 0-RTT and all generations of 1-RTT keys use the same packet<br>number space.  Separate packet number spaces ensures that the<br>acknowledgment of packets sent with one level of encryption will not<br>cause spurious retransmission of packets sent with a different<br>encryption level.  Congestion control and round-trip time (RTT)<br>measurement are unified across packet number spaces.<a href="#section-4.1-1">¶</a></p>
+<h3 id="4-2-Monotonically-Increasing-Packet-Numbers"><a href="#4-2-Monotonically-Increasing-Packet-Numbers" class="headerlink" title="4.2. Monotonically Increasing Packet Numbers"></a><a href="#section-4.2">4.2. </a><a href="#name-monotonically-increasing-pa">Monotonically Increasing Packet Numbers</a></h3><p>TCP conflates transmission order at the sender with delivery order at the<br>receiver, resulting in the retransmission ambiguity problem<br>[<a href="#RETRANSMISSION">RETRANSMISSION</a>].  QUIC separates transmission order from delivery order:<br>packet numbers indicate transmission order, and delivery order is determined by<br>the stream offsets in STREAM frames.<a href="#section-4.2-1">¶</a></p>
+<p>QUIC’s packet number is strictly increasing within a packet number space<br>and directly encodes transmission order.  A higher packet number signifies<br>that the packet was sent later, and a lower packet number signifies that<br>the packet was sent earlier.  When a packet containing ack-eliciting<br>frames is detected lost, QUIC includes necessary frames in a new packet<br>with a new packet number, removing ambiguity about which packet is<br>acknowledged when an ACK is received.  Consequently, more accurate RTT<br>measurements can be made, spurious retransmissions are trivially detected, and<br>mechanisms such as Fast Retransmit can be applied universally, based only on<br>packet number.<a href="#section-4.2-2">¶</a></p>
+<p>This design point significantly simplifies loss detection mechanisms for QUIC.<br>Most TCP mechanisms implicitly attempt to infer transmission ordering based on<br>TCP sequence numbers – a nontrivial task, especially when TCP timestamps are<br>not available.<a href="#section-4.2-3">¶</a></p>
+<h3 id="4-3-Clearer-Loss-Epoch"><a href="#4-3-Clearer-Loss-Epoch" class="headerlink" title="4.3. Clearer Loss Epoch"></a><a href="#section-4.3">4.3. </a><a href="#name-clearer-loss-epoch">Clearer Loss Epoch</a></h3><p>QUIC starts a loss epoch when a packet is lost. The loss epoch ends when any<br>packet sent after the start of the epoch is acknowledged.  TCP waits for the gap<br>in the sequence number space to be filled, and so if a segment is lost multiple<br>times in a row, the loss epoch may not end for several round trips. Because both<br>should reduce their congestion windows only once per epoch, QUIC will do it once<br>for every round trip that experiences loss, while TCP may only do it once across<br>multiple round trips.<a href="#section-4.3-1">¶</a></p>
+<h3 id="4-4-No-Reneging"><a href="#4-4-No-Reneging" class="headerlink" title="4.4. No Reneging"></a><a href="#section-4.4">4.4. </a><a href="#name-no-reneging">No Reneging</a></h3><p>QUIC ACK frames contain information similar to that in TCP Selective<br>Acknowledgments (SACKs) [<a href="#RFC2018">RFC2018</a>]. However, QUIC does not allow a packet<br>acknowledgment to be reneged, greatly simplifying implementations on both sides<br>and reducing memory pressure on the sender.<a href="#section-4.4-1">¶</a></p>
+<h3 id="4-5-More-ACK-Ranges"><a href="#4-5-More-ACK-Ranges" class="headerlink" title="4.5. More ACK Ranges"></a><a href="#section-4.5">4.5. </a><a href="#name-more-ack-ranges">More ACK Ranges</a></h3><p>QUIC supports many ACK ranges, as opposed to TCP’s three SACK ranges.  In<br>high-loss environments, this speeds recovery, reduces spurious retransmits, and<br>ensures forward progress without relying on timeouts.<a href="#section-4.5-1">¶</a></p>
+<h3 id="4-6-Explicit-Correction-for-Delayed-Acknowledgments"><a href="#4-6-Explicit-Correction-for-Delayed-Acknowledgments" class="headerlink" title="4.6. Explicit Correction for Delayed Acknowledgments"></a><a href="#section-4.6">4.6. </a><a href="#name-explicit-correction-for-del">Explicit Correction for Delayed Acknowledgments</a></h3><p>QUIC endpoints measure the delay incurred between when a packet is received and<br>when the corresponding acknowledgment is sent, allowing a peer to maintain a<br>more accurate RTT estimate; see <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-13.2">Section 13.2</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>].<a href="#section-4.6-1">¶</a></p>
+<h3 id="4-7-Probe-Timeout-Replaces-RTO-and-TLP"><a href="#4-7-Probe-Timeout-Replaces-RTO-and-TLP" class="headerlink" title="4.7. Probe Timeout Replaces RTO and TLP"></a><a href="#section-4.7">4.7. </a><a href="#name-probe-timeout-replaces-rto-">Probe Timeout Replaces RTO and TLP</a></h3><p>QUIC uses a probe timeout (PTO; see <a href="#pto">Section 6.2</a>), with a timer based on TCP’s<br>retransmission timeout (RTO) computation; see [<a href="#RFC6298">RFC6298</a>].  QUIC’s PTO includes<br>the peer’s maximum expected acknowledgment delay instead of using a fixed<br>minimum timeout.<a href="#section-4.7-1">¶</a></p>
+<p>Similar to the RACK-TLP loss detection algorithm for TCP [<a href="#RFC8985">RFC8985</a>], QUIC does<br>not collapse the congestion window when the PTO expires, since a single packet<br>loss at the tail does not indicate persistent congestion.  Instead, QUIC<br>collapses the congestion window when persistent congestion is declared; see<br><a href="#persistent-congestion">Section 7.6</a>. In doing this, QUIC avoids unnecessary congestion<br>window reductions, obviating the need for correcting mechanisms such as Forward<br>RTO-Recovery (F-RTO) [<a href="#RFC5682">RFC5682</a>]. Since QUIC does not collapse the congestion<br>window on a PTO expiration, a QUIC sender is not limited from sending more<br>in-flight packets after a PTO expiration if it still has available congestion<br>window. This occurs when a sender is application limited and the PTO timer<br>expires. This is more aggressive than TCP’s RTO mechanism when application<br>limited, but identical when not application limited.<a href="#section-4.7-2">¶</a></p>
+<p>QUIC allows probe packets to temporarily exceed the congestion window whenever<br>the timer expires.<a href="#section-4.7-3">¶</a></p>
+<h3 id="4-8-The-Minimum-Congestion-Window-Is-Two-Packets"><a href="#4-8-The-Minimum-Congestion-Window-Is-Two-Packets" class="headerlink" title="4.8. The Minimum Congestion Window Is Two Packets"></a><a href="#section-4.8">4.8. </a><a href="#name-the-minimum-congestion-wind">The Minimum Congestion Window Is Two Packets</a></h3><p>TCP uses a minimum congestion window of one packet. However, loss of that single<br>packet means that the sender needs to wait for a PTO to recover (<a href="#pto">Section 6.2</a>), which<br>can be much longer than an RTT.  Sending a single ack-eliciting packet also<br>increases the chances of incurring additional latency when a receiver delays its<br>acknowledgment.<a href="#section-4.8-1">¶</a></p>
+<p>QUIC therefore recommends that the minimum congestion window be two<br>packets. While this increases network load, it is considered safe since the<br>sender will still reduce its sending rate exponentially under persistent<br>congestion (<a href="#pto">Section 6.2</a>).<a href="#section-4.8-2">¶</a></p>
+<h3 id="4-9-Handshake-Packets-Are-Not-Special"><a href="#4-9-Handshake-Packets-Are-Not-Special" class="headerlink" title="4.9. Handshake Packets Are Not Special"></a><a href="#section-4.9">4.9. </a><a href="#name-handshake-packets-are-not-s">Handshake Packets Are Not Special</a></h3><p>TCP treats the loss of SYN or SYN-ACK packet as persistent congestion and<br>reduces the congestion window to one packet; see [<a href="#RFC5681">RFC5681</a>]. QUIC treats loss<br>of a packet containing handshake data the same as other losses.<a href="#section-4.9-1">¶</a></p>
+<h2 id="5-Estimating-the-Round-Trip-Time"><a href="#5-Estimating-the-Round-Trip-Time" class="headerlink" title="5. Estimating the Round-Trip Time"></a><a href="#section-5">5. </a><a href="#name-estimating-the-round-trip-t">Estimating the Round-Trip Time</a></h2><p>At a high level, an endpoint measures the time from when a packet was sent to<br>when it is acknowledged as an RTT sample. The endpoint uses RTT samples and<br>peer-reported host delays (see <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-13.2">Section 13.2</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>]) to generate a<br>statistical description of the network path’s RTT. An endpoint computes the<br>following three values for each path: the minimum value over a period of time<br>(min_rtt), an exponentially weighted moving average (smoothed_rtt), and the mean<br>deviation (referred to as “variation” in the rest of this document) in the<br>observed RTT samples (rttvar).<a href="#section-5-1">¶</a></p>
+<h3 id="5-1-Generating-RTT-Samples"><a href="#5-1-Generating-RTT-Samples" class="headerlink" title="5.1. Generating RTT Samples"></a><a href="#section-5.1">5.1. </a><a href="#name-generating-rtt-samples">Generating RTT Samples</a></h3><p>An endpoint generates an RTT sample on receiving an ACK frame that meets the<br>following two conditions:<a href="#section-5.1-1">¶</a></p>
+<ul>
+<li>the largest acknowledged packet number is newly acknowledged, and<a href="#section-5.1-2.1">¶</a></li>
+<li>at least one of the newly acknowledged packets was ack-eliciting.<a href="#section-5.1-2.2">¶</a></li>
+</ul>
+<p>The RTT sample, latest_rtt, is generated as the time elapsed since the largest<br>acknowledged packet was sent:<a href="#section-5.1-3">¶</a></p>
+<pre><code>latest_rtt = ack_time - send_time_of_largest_acked
+</code></pre>
+<p><a href="#section-5.1-4">¶</a></p>
+<p>An RTT sample is generated using only the largest acknowledged packet in the<br>received ACK frame.  This is because a peer reports acknowledgment delays for<br>only the largest acknowledged packet in an ACK frame.  While the reported<br>acknowledgment delay is not used by the RTT sample measurement, it is used to<br>adjust the RTT sample in subsequent computations of smoothed_rtt and rttvar<br>(<a href="#smoothed-rtt">Section 5.3</a>).<a href="#section-5.1-5">¶</a></p>
+<p>To avoid generating multiple RTT samples for a single packet, an ACK frame<br>SHOULD NOT be used to update RTT estimates if it does not newly acknowledge the<br>largest acknowledged packet.<a href="#section-5.1-6">¶</a></p>
+<p>An RTT sample MUST NOT be generated on receiving an ACK frame that does not<br>newly acknowledge at least one ack-eliciting packet. A peer usually does not<br>send an ACK frame when only non-ack-eliciting packets are received. Therefore,<br>an ACK frame that contains acknowledgments for only non-ack-eliciting packets<br>could include an arbitrarily large ACK Delay value.  Ignoring<br>such ACK frames avoids complications in subsequent smoothed_rtt and rttvar<br>computations.<a href="#section-5.1-7">¶</a></p>
+<p>A sender might generate multiple RTT samples per RTT when multiple ACK frames<br>are received within an RTT.  As suggested in [<a href="#RFC6298">RFC6298</a>], doing so might result<br>in inadequate history in smoothed_rtt and rttvar.  Ensuring that RTT estimates<br>retain sufficient history is an open research question.<a href="#section-5.1-8">¶</a></p>
+<h3 id="5-2-Estimating-min-rtt"><a href="#5-2-Estimating-min-rtt" class="headerlink" title="5.2. Estimating min_rtt"></a><a href="#section-5.2">5.2. </a><a href="#name-estimating-min_rtt">Estimating min_rtt</a></h3><p>min_rtt is the sender’s estimate of the minimum RTT observed for a given network<br>path over a period of time. In this document, min_rtt is used by loss detection<br>to reject implausibly small RTT samples.<a href="#section-5.2-1">¶</a></p>
+<p>min_rtt MUST be set to the latest_rtt on the first RTT sample. min_rtt MUST be<br>set to the lesser of min_rtt and latest_rtt (<a href="#latest-rtt">Section 5.1</a>) on all other<br>samples.<a href="#section-5.2-2">¶</a></p>
+<p>An endpoint uses only locally observed times in computing the min_rtt and does<br>not adjust for acknowledgment delays reported by the peer. Doing so allows the<br>endpoint to set a lower bound for the smoothed_rtt based entirely on what it<br>observes (see <a href="#smoothed-rtt">Section 5.3</a>) and limits potential underestimation due to<br>erroneously reported delays by the peer.<a href="#section-5.2-3">¶</a></p>
+<p>The RTT for a network path may change over time. If a path’s actual RTT<br>decreases, the min_rtt will adapt immediately on the first low sample.  If the<br>path’s actual RTT increases, however, the min_rtt will not adapt to it, allowing<br>future RTT samples that are smaller than the new RTT to be included in<br>smoothed_rtt.<a href="#section-5.2-4">¶</a></p>
+<p>Endpoints SHOULD set the min_rtt to the newest RTT sample after persistent<br>congestion is established. This avoids repeatedly declaring persistent<br>congestion when the RTT increases. This also allows a connection to reset<br>its estimate of min_rtt and smoothed_rtt after a disruptive network event;<br>see <a href="#smoothed-rtt">Section 5.3</a>.<a href="#section-5.2-5">¶</a></p>
+<p>Endpoints MAY reestablish the min_rtt at other times in the connection, such as<br>when traffic volume is low and an acknowledgment is received with a low<br>acknowledgment delay. Implementations SHOULD NOT refresh the min_rtt<br>value too often since the actual minimum RTT of the path is not<br>frequently observable.<a href="#section-5.2-6">¶</a></p>
+<h3 id="5-3-Estimating-smoothed-rtt-and-rttvar"><a href="#5-3-Estimating-smoothed-rtt-and-rttvar" class="headerlink" title="5.3. Estimating smoothed_rtt and rttvar"></a><a href="#section-5.3">5.3. </a><a href="#name-estimating-smoothed_rtt-and">Estimating smoothed_rtt and rttvar</a></h3><p>smoothed_rtt is an exponentially weighted moving average of an endpoint’s RTT<br>samples, and rttvar estimates the variation in the RTT samples using a mean<br>variation.<a href="#section-5.3-1">¶</a></p>
+<p>The calculation of smoothed_rtt uses RTT samples after adjusting them for<br>acknowledgment delays. These delays are decoded from the ACK Delay field of<br>ACK frames as described in <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-19.3">Section 19.3</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>].<a href="#section-5.3-2">¶</a></p>
+<p>The peer might report acknowledgment delays that are larger than the peer’s<br>max_ack_delay during the handshake (<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-13.2.1">Section 13.2.1</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>]). To<br>account for this, the endpoint SHOULD ignore max_ack_delay until the handshake<br>is confirmed, as defined in <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9001#section-4.1.2">Section 4.1.2</a> of [<a href="#QUIC-TLS">QUIC-TLS</a>]. When they occur,<br>these large acknowledgment delays are likely to be non-repeating and limited to<br>the handshake. The endpoint can therefore use them without limiting them to the<br>max_ack_delay, avoiding unnecessary inflation of the RTT estimate.<a href="#section-5.3-3">¶</a></p>
+<p>Note that a large acknowledgment delay can result in a substantially inflated<br>smoothed_rtt if there is an error either in the peer’s reporting of the<br>acknowledgment delay or in the endpoint’s min_rtt estimate.  Therefore, prior<br>to handshake confirmation, an endpoint MAY ignore RTT samples if adjusting<br>the RTT sample for acknowledgment delay causes the sample to be less than the<br>min_rtt.<a href="#section-5.3-4">¶</a></p>
+<p>After the handshake is confirmed, any acknowledgment delays reported by the<br>peer that are greater than the peer’s max_ack_delay are attributed to<br>unintentional but potentially repeating delays, such as scheduler latency at the<br>peer or loss of previous acknowledgments.  Excess delays could also be due to<br>a noncompliant receiver.  Therefore, these extra delays are considered<br>effectively part of path delay and incorporated into the RTT estimate.<a href="#section-5.3-5">¶</a></p>
+<p>Therefore, when adjusting an RTT sample using peer-reported acknowledgment<br>delays, an endpoint:<a href="#section-5.3-6">¶</a></p>
+<ul>
+<li>MAY ignore the acknowledgment delay for Initial packets, since these<br>acknowledgments are not delayed by the peer (<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-13.2.1">Section 13.2.1</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>]);<a href="#section-5.3-7.1">¶</a></li>
+<li>SHOULD ignore the peer’s max_ack_delay until the handshake is confirmed;<a href="#section-5.3-7.2">¶</a></li>
+<li>MUST use the lesser of the acknowledgment delay and the peer’s max_ack_delay<br>after the handshake is confirmed; and<a href="#section-5.3-7.3">¶</a></li>
+<li>MUST NOT subtract the acknowledgment delay from the RTT sample if the<br>resulting value is smaller than the min_rtt.  This limits the underestimation<br>of the smoothed_rtt due to a misreporting peer.<a href="#section-5.3-7.4">¶</a></li>
+</ul>
+<p>Additionally, an endpoint might postpone the processing of acknowledgments when<br>the corresponding decryption keys are not immediately available. For example, a<br>client might receive an acknowledgment for a 0-RTT packet that it cannot<br>decrypt because 1-RTT packet protection keys are not yet available to it. In<br>such cases, an endpoint SHOULD subtract such local delays from its RTT sample<br>until the handshake is confirmed.<a href="#section-5.3-8">¶</a></p>
+<p>Similar to [<a href="#RFC6298">RFC6298</a>], smoothed_rtt and rttvar are computed as follows.<a href="#section-5.3-9">¶</a></p>
+<p>An endpoint initializes the RTT estimator during connection establishment and<br>when the estimator is reset during connection migration; see <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-9.4">Section 9.4</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>]. Before any RTT samples are available for a new path or when<br>the estimator is reset, the estimator is initialized using the initial RTT; see<br><a href="#pto-handshake">Section 6.2.2</a>.<a href="#section-5.3-10">¶</a></p>
+<p>smoothed_rtt and rttvar are initialized as follows, where kInitialRtt contains<br>the initial RTT value:<a href="#section-5.3-11">¶</a></p>
+<pre><code>smoothed_rtt = kInitialRtt
+rttvar = kInitialRtt / 2
+</code></pre>
+<p><a href="#section-5.3-12">¶</a></p>
+<p>RTT samples for the network path are recorded in latest_rtt; see<br><a href="#latest-rtt">Section 5.1</a>. On the first RTT sample after initialization, the estimator is<br>reset using that sample. This ensures that the estimator retains no history of<br>past samples.  Packets sent on other paths do not contribute RTT samples to the<br>current path, as described in <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-9.4">Section 9.4</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>].<a href="#section-5.3-13">¶</a></p>
+<p>On the first RTT sample after initialization, smoothed_rtt and rttvar are set as<br>follows:<a href="#section-5.3-14">¶</a></p>
+<pre><code>smoothed_rtt = latest_rtt
+rttvar = latest_rtt / 2
+</code></pre>
+<p><a href="#section-5.3-15">¶</a></p>
+<p>On subsequent RTT samples, smoothed_rtt and rttvar evolve as follows:<a href="#section-5.3-16">¶</a></p>
+<pre><code>ack_delay = decoded acknowledgment delay from ACK frame
+if (handshake confirmed):
+  ack_delay = min(ack_delay, max_ack_delay)
+adjusted_rtt = latest_rtt
+if (latest_rtt &gt;= min_rtt + ack_delay):
+  adjusted_rtt = latest_rtt - ack_delay
+smoothed_rtt = 7/8 * smoothed_rtt + 1/8 * adjusted_rtt
+rttvar_sample = abs(smoothed_rtt - adjusted_rtt)
+rttvar = 3/4 * rttvar + 1/4 * rttvar_sample
+</code></pre>
+<p><a href="#section-5.3-17">¶</a></p>
+<h2 id="6-Loss-Detection"><a href="#6-Loss-Detection" class="headerlink" title="6. Loss Detection"></a><a href="#section-6">6. </a><a href="#name-loss-detection">Loss Detection</a></h2><p>QUIC senders use acknowledgments to detect lost packets and a PTO to ensure<br>acknowledgments are received; see <a href="#pto">Section 6.2</a>. This section provides a description<br>of these algorithms.<a href="#section-6-1">¶</a></p>
+<p>If a packet is lost, the QUIC transport needs to recover from that loss, such<br>as by retransmitting the data, sending an updated frame, or discarding the<br>frame.  For more information, see <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-13.3">Section 13.3</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>].<a href="#section-6-2">¶</a></p>
+<p>Loss detection is separate per packet number space, unlike RTT measurement and<br>congestion control, because RTT and congestion control are properties of the<br>path, whereas loss detection also relies upon key availability.<a href="#section-6-3">¶</a></p>
+<h3 id="6-1-Acknowledgment-Based-Detection"><a href="#6-1-Acknowledgment-Based-Detection" class="headerlink" title="6.1. Acknowledgment-Based Detection"></a><a href="#section-6.1">6.1. </a><a href="#name-acknowledgment-based-detect">Acknowledgment-Based Detection</a></h3><p>Acknowledgment-based loss detection implements the spirit of TCP’s Fast<br>Retransmit [<a href="#RFC5681">RFC5681</a>], Early Retransmit [<a href="#RFC5827">RFC5827</a>], Forward Acknowledgment<br>[<a href="#FACK">FACK</a>], SACK loss recovery [<a href="#RFC6675">RFC6675</a>], and RACK-TLP [<a href="#RFC8985">RFC8985</a>]. This<br>section provides an overview of how these algorithms are implemented in QUIC.<a href="#section-6.1-1">¶</a></p>
+<p>A packet is declared lost if it meets all of the following conditions:<a href="#section-6.1-2">¶</a></p>
+<ul>
+<li>The packet is unacknowledged, in flight, and was sent prior to an<br>acknowledged packet.<a href="#section-6.1-3.1">¶</a></li>
+<li>The packet was sent kPacketThreshold packets before an acknowledged packet<br>(<a href="#packet-threshold">Section 6.1.1</a>), or it was sent long enough in the past<br>(<a href="#time-threshold">Section 6.1.2</a>).<a href="#section-6.1-3.2">¶</a></li>
+</ul>
+<p>The acknowledgment indicates that a packet sent later was delivered, and the<br>packet and time thresholds provide some tolerance for packet reordering.<a href="#section-6.1-4">¶</a></p>
+<p>Spuriously declaring packets as lost leads to unnecessary retransmissions and<br>may result in degraded performance due to the actions of the congestion<br>controller upon detecting loss.  Implementations can detect spurious<br>retransmissions and increase the packet or time reordering threshold to<br>reduce future spurious retransmissions and loss events. Implementations with<br>adaptive time thresholds MAY choose to start with smaller initial reordering<br>thresholds to minimize recovery latency.<a href="#section-6.1-5">¶</a></p>
+<h4 id="6-1-1-Packet-Threshold"><a href="#6-1-1-Packet-Threshold" class="headerlink" title="6.1.1. Packet Threshold"></a><a href="#section-6.1.1">6.1.1. </a><a href="#name-packet-threshold">Packet Threshold</a></h4><p>The RECOMMENDED initial value for the packet reordering threshold<br>(kPacketThreshold) is 3, based on best practices for TCP loss detection<br>[<a href="#RFC5681">RFC5681</a>][<a href="#RFC6675">RFC6675</a>].  In order to remain similar to TCP,<br>implementations SHOULD NOT use a packet threshold less than 3; see [<a href="#RFC5681">RFC5681</a>].<a href="#section-6.1.1-1">¶</a></p>
+<p>Some networks may exhibit higher degrees of packet reordering, causing a sender<br>to detect spurious losses. Additionally, packet reordering could be more common<br>with QUIC than TCP because network elements that could observe and reorder TCP<br>packets cannot do that for QUIC and also because QUIC packet numbers are<br>encrypted.  Algorithms that increase the reordering threshold after spuriously<br>detecting losses, such as RACK [<a href="#RFC8985">RFC8985</a>], have proven to be useful in TCP and<br>are expected to be at least as useful in QUIC.<a href="#section-6.1.1-2">¶</a></p>
+<h4 id="6-1-2-Time-Threshold"><a href="#6-1-2-Time-Threshold" class="headerlink" title="6.1.2. Time Threshold"></a><a href="#section-6.1.2">6.1.2. </a><a href="#name-time-threshold">Time Threshold</a></h4><p>Once a later packet within the same packet number space has been acknowledged,<br>an endpoint SHOULD declare an earlier packet lost if it was sent a threshold<br>amount of time in the past. To avoid declaring packets as lost too early, this<br>time threshold MUST be set to at least the local timer granularity, as<br>indicated by the kGranularity constant.  The time threshold is:<a href="#section-6.1.2-1">¶</a></p>
+<pre><code>max(kTimeThreshold * max(smoothed_rtt, latest_rtt), kGranularity)
+</code></pre>
+<p><a href="#section-6.1.2-2">¶</a></p>
+<p>If packets sent prior to the largest acknowledged packet cannot yet be declared<br>lost, then a timer SHOULD be set for the remaining time.<a href="#section-6.1.2-3">¶</a></p>
+<p>Using max(smoothed_rtt, latest_rtt) protects from the two following cases:<a href="#section-6.1.2-4">¶</a></p>
+<ul>
+<li>the latest RTT sample is lower than the smoothed RTT, perhaps due to<br>reordering where the acknowledgment encountered a shorter path;<a href="#section-6.1.2-5.1">¶</a></li>
+<li>the latest RTT sample is higher than the smoothed RTT, perhaps due to a<br>sustained increase in the actual RTT, but the smoothed RTT has not yet caught<br>up.<a href="#section-6.1.2-5.2">¶</a></li>
+</ul>
+<p>The RECOMMENDED time threshold (kTimeThreshold), expressed as an RTT multiplier,<br>is 9/8. The RECOMMENDED value of the timer granularity (kGranularity) is 1<br>millisecond.<a href="#section-6.1.2-6">¶</a></p>
+<p>Note: TCP’s RACK [<a href="#RFC8985">RFC8985</a>] specifies a slightly larger threshold, equivalent<br>to 5/4, for a similar purpose. Experience with QUIC shows that 9/8 works well.<a href="#section-6.1.2-7.1">¶</a></p>
+<p>Implementations MAY experiment with absolute thresholds, thresholds from<br>previous connections, adaptive thresholds, or the including of RTT variation.<br>Smaller thresholds reduce reordering resilience and increase spurious<br>retransmissions, and larger thresholds increase loss detection delay.<a href="#section-6.1.2-8">¶</a></p>
+<h3 id="6-2-Probe-Timeout"><a href="#6-2-Probe-Timeout" class="headerlink" title="6.2. Probe Timeout"></a><a href="#section-6.2">6.2. </a><a href="#name-probe-timeout">Probe Timeout</a></h3><p>A Probe Timeout (PTO) triggers the sending of one or two probe datagrams when<br>ack-eliciting packets are not acknowledged within the expected period of<br>time or the server may not have validated the client’s address.  A PTO enables<br>a connection to recover from loss of tail packets or acknowledgments.<a href="#section-6.2-1">¶</a></p>
+<p>As with loss detection, the PTO is per packet number space. That is, a<br>PTO value is computed per packet number space.<a href="#section-6.2-2">¶</a></p>
+<p>A PTO timer expiration event does not indicate packet loss and MUST NOT cause<br>prior unacknowledged packets to be marked as lost. When an acknowledgment is<br>received that newly acknowledges packets, loss detection proceeds as dictated<br>by the packet and time threshold mechanisms; see <a href="#ack-loss-detection">Section 6.1</a>.<a href="#section-6.2-3">¶</a></p>
+<p>The PTO algorithm used in QUIC implements the reliability functions of Tail Loss<br>Probe [<a href="#RFC8985">RFC8985</a>], RTO [<a href="#RFC5681">RFC5681</a>], and F-RTO algorithms for TCP<br>[<a href="#RFC5682">RFC5682</a>]. The timeout computation is based on TCP’s RTO period [<a href="#RFC6298">RFC6298</a>].<a href="#section-6.2-4">¶</a></p>
+<h4 id="6-2-1-Computing-PTO"><a href="#6-2-1-Computing-PTO" class="headerlink" title="6.2.1. Computing PTO"></a><a href="#section-6.2.1">6.2.1. </a><a href="#name-computing-pto">Computing PTO</a></h4><p>When an ack-eliciting packet is transmitted, the sender schedules a timer for<br>the PTO period as follows:<a href="#section-6.2.1-1">¶</a></p>
+<pre><code>PTO = smoothed_rtt + max(4*rttvar, kGranularity) + max_ack_delay
+</code></pre>
+<p><a href="#section-6.2.1-2">¶</a></p>
+<p>The PTO period is the amount of time that a sender ought to wait for an<br>acknowledgment of a sent packet.  This time period includes the estimated<br>network RTT (smoothed_rtt), the variation in the estimate (4*rttvar),<br>and max_ack_delay, to account for the maximum time by which a receiver might<br>delay sending an acknowledgment.<a href="#section-6.2.1-3">¶</a></p>
+<p>When the PTO is armed for Initial or Handshake packet number spaces, the<br>max_ack_delay in the PTO period computation is set to 0, since the peer is<br>expected to not delay these packets intentionally; see <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-13.2.1">Section 13.2.1</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>].<a href="#section-6.2.1-4">¶</a></p>
+<p>The PTO period MUST be at least kGranularity to avoid the timer expiring<br>immediately.<a href="#section-6.2.1-5">¶</a></p>
+<p>When ack-eliciting packets in multiple packet number spaces are in flight, the<br>timer MUST be set to the earlier value of the Initial and Handshake packet<br>number spaces.<a href="#section-6.2.1-6">¶</a></p>
+<p>An endpoint MUST NOT set its PTO timer for the Application Data packet number<br>space until the handshake is confirmed. Doing so prevents the endpoint from<br>retransmitting information in packets when either the peer does not yet have the<br>keys to process them or the endpoint does not yet have the keys to process their<br>acknowledgments. For example, this can happen when a client sends 0-RTT packets<br>to the server; it does so without knowing whether the server will be able to<br>decrypt them. Similarly, this can happen when a server sends 1-RTT packets<br>before confirming that the client has verified the server’s certificate and can<br>therefore read these 1-RTT packets.<a href="#section-6.2.1-7">¶</a></p>
+<p>A sender SHOULD restart its PTO timer every time an ack-eliciting packet is<br>sent or acknowledged, or when Initial or Handshake keys are discarded<br>(<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9001#section-4.9">Section 4.9</a> of [<a href="#QUIC-TLS">QUIC-TLS</a>]). This ensures the PTO is always set based on the<br>latest estimate of the RTT and for the correct packet across packet<br>number spaces.<a href="#section-6.2.1-8">¶</a></p>
+<p>When a PTO timer expires, the PTO backoff MUST be increased, resulting in the<br>PTO period being set to twice its current value. The PTO backoff factor is reset<br>when an acknowledgment is received, except in the following case. A server<br>might take longer to respond to packets during the handshake than otherwise.  To<br>protect such a server from repeated client probes, the PTO backoff is not reset<br>at a client that is not yet certain that the server has finished validating the<br>client’s address. That is, a client does not reset the PTO backoff factor on<br>receiving acknowledgments in Initial packets.<a href="#section-6.2.1-9">¶</a></p>
+<p>This exponential reduction in the sender’s rate is important because consecutive<br>PTOs might be caused by loss of packets or acknowledgments due to severe<br>congestion.  Even when there are ack-eliciting packets in flight in multiple<br>packet number spaces, the exponential increase in PTO occurs across all spaces<br>to prevent excess load on the network.  For example, a timeout in the Initial<br>packet number space doubles the length of the timeout in the Handshake packet<br>number space.<a href="#section-6.2.1-10">¶</a></p>
+<p>The total length of time over which consecutive PTOs expire is limited by the<br>idle timeout.<a href="#section-6.2.1-11">¶</a></p>
+<p>The PTO timer MUST NOT be set if a timer is set for time threshold<br>loss detection; see <a href="#time-threshold">Section 6.1.2</a>.  A timer that is set for time<br>threshold loss detection will expire earlier than the PTO timer<br>in most cases and is less likely to spuriously retransmit data.<a href="#section-6.2.1-12">¶</a></p>
+<h4 id="6-2-2-Handshakes-and-New-Paths"><a href="#6-2-2-Handshakes-and-New-Paths" class="headerlink" title="6.2.2. Handshakes and New Paths"></a><a href="#section-6.2.2">6.2.2. </a><a href="#name-handshakes-and-new-paths">Handshakes and New Paths</a></h4><p>Resumed connections over the same network MAY use the previous connection’s<br>final smoothed RTT value as the resumed connection’s initial RTT.  When no<br>previous RTT is available, the initial RTT SHOULD be set to 333 milliseconds.<br>This results in handshakes starting with a PTO of 1 second, as recommended for<br>TCP’s initial RTO; see <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc6298#section-2">Section 2</a> of [<a href="#RFC6298">RFC6298</a>].<a href="#section-6.2.2-1">¶</a></p>
+<p>A connection MAY use the delay between sending a PATH_CHALLENGE and receiving a<br>PATH_RESPONSE to set the initial RTT (see kInitialRtt in<br><a href="#constants-of-interest">Appendix A.2</a>) for a new path, but the delay SHOULD NOT be<br>considered an RTT sample.<a href="#section-6.2.2-2">¶</a></p>
+<p>When the Initial keys and Handshake keys are discarded (see<br><a href="#discarding-packets">Section 6.4</a>), any Initial packets and Handshake packets can<br>no longer be acknowledged, so they are removed from bytes in<br>flight. When Initial or Handshake keys are discarded, the PTO and loss<br>detection timers MUST be reset, because discarding keys indicates<br>forward progress and the loss detection timer might have been set for<br>a now-discarded packet number space.<a href="#section-6.2.2-3">¶</a></p>
+<h5 id="6-2-2-1-Before-Address-Validation"><a href="#6-2-2-1-Before-Address-Validation" class="headerlink" title="6.2.2.1. Before Address Validation"></a><a href="#section-6.2.2.1">6.2.2.1. </a><a href="#name-before-address-validation">Before Address Validation</a></h5><p>Until the server has validated the client’s address on the path, the amount of<br>data it can send is limited to three times the amount of data received,<br>as specified in <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-8.1">Section 8.1</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>]. If no additional data can be<br>sent, the server’s PTO timer MUST NOT be armed until datagrams have been<br>received from the client because packets sent on PTO count against the<br>anti-amplification limit.<a href="#section-6.2.2.1-1">¶</a></p>
+<p>When the server receives a datagram from the client, the amplification limit is<br>increased and the server resets the PTO timer.  If the PTO timer is then set to<br>a time in the past, it is executed immediately. Doing so avoids sending new<br>1-RTT packets prior to packets critical to the completion of the handshake.<br>In particular, this can happen when 0-RTT is accepted but the server fails to<br>validate the client’s address.<a href="#section-6.2.2.1-2">¶</a></p>
+<p>Since the server could be blocked until more datagrams are received from the<br>client, it is the client’s responsibility to send packets to unblock the server<br>until it is certain that the server has finished its address validation (see<br><a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-8">Section 8</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>]). That is, the client MUST set the PTO timer<br>if the client has not received an acknowledgment for any of its Handshake<br>packets and the handshake is not confirmed (see <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9001#section-4.1.2">Section 4.1.2</a> of [<a href="#QUIC-TLS">QUIC-TLS</a>]),<br>even if there are no packets in flight. When the PTO fires, the client MUST<br>send a Handshake packet if it has Handshake keys, otherwise it MUST send an<br>Initial packet in a UDP datagram with a payload of at least 1200 bytes.<a href="#section-6.2.2.1-3">¶</a></p>
+<h4 id="6-2-3-Speeding-up-Handshake-Completion"><a href="#6-2-3-Speeding-up-Handshake-Completion" class="headerlink" title="6.2.3. Speeding up Handshake Completion"></a><a href="#section-6.2.3">6.2.3. </a><a href="#name-speeding-up-handshake-compl">Speeding up Handshake Completion</a></h4><p>When a server receives an Initial packet containing duplicate CRYPTO data,<br>it can assume the client did not receive all of the server’s CRYPTO data sent<br>in Initial packets, or the client’s estimated RTT is too small. When a<br>client receives Handshake or 1-RTT packets prior to obtaining Handshake keys,<br>it may assume some or all of the server’s Initial packets were lost.<a href="#section-6.2.3-1">¶</a></p>
+<p>To speed up handshake completion under these conditions, an endpoint MAY, for a<br>limited number of times per connection, send a packet containing<br>unacknowledged CRYPTO data earlier than the PTO expiry, subject to the address<br>validation limits in <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-8.1">Section 8.1</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>]. Doing so at most once<br>for each connection is adequate to quickly recover from a single packet loss.<br>An endpoint that always retransmits packets in response to receiving packets<br>that it cannot process risks creating an infinite exchange of packets.<a href="#section-6.2.3-2">¶</a></p>
+<p>Endpoints can also use coalesced packets (see <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-12.2">Section 12.2</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>]) to ensure that each datagram elicits at least one<br>acknowledgment. For example, a client can coalesce an Initial packet containing<br>PING and PADDING frames with a 0-RTT data packet, and a server can coalesce an<br>Initial packet containing a PING frame with one or more packets in its first<br>flight.<a href="#section-6.2.3-3">¶</a></p>
+<h4 id="6-2-4-Sending-Probe-Packets"><a href="#6-2-4-Sending-Probe-Packets" class="headerlink" title="6.2.4. Sending Probe Packets"></a><a href="#section-6.2.4">6.2.4. </a><a href="#name-sending-probe-packets">Sending Probe Packets</a></h4><p>When a PTO timer expires, a sender MUST send at least one ack-eliciting packet<br>in the packet number space as a probe.  An endpoint MAY send up to two<br>full-sized datagrams containing ack-eliciting packets to avoid an expensive<br>consecutive PTO expiration due to a single lost datagram or to transmit data<br>from multiple packet number spaces. All probe packets sent on a PTO MUST be<br>ack-eliciting.<a href="#section-6.2.4-1">¶</a></p>
+<p>In addition to sending data in the packet number space for which the timer<br>expired, the sender SHOULD send ack-eliciting packets from other packet number<br>spaces with in-flight data, coalescing packets if possible.  This is<br>particularly valuable when the server has both Initial and Handshake data in<br>flight or when the client has both Handshake and Application Data in flight<br>because the peer might only have receive keys for one of the two packet number<br>spaces.<a href="#section-6.2.4-2">¶</a></p>
+<p>If the sender wants to elicit a faster acknowledgment on PTO, it can skip a<br>packet number to eliminate the acknowledgment delay.<a href="#section-6.2.4-3">¶</a></p>
+<p>An endpoint SHOULD include new data in packets that are sent on PTO expiration.<br>Previously sent data MAY be sent if no new data can be sent. Implementations<br>MAY use alternative strategies for determining the content of probe packets,<br>including sending new or retransmitted data based on the application’s<br>priorities.<a href="#section-6.2.4-4">¶</a></p>
+<p>It is possible the sender has no new or previously sent data to send.<br>As an example, consider the following sequence of events: new application data<br>is sent in a STREAM frame, deemed lost, then retransmitted in a new packet,<br>and then the original transmission is acknowledged.  When there is no data to<br>send, the sender SHOULD send a PING or other ack-eliciting frame in a single<br>packet, rearming the PTO timer.<a href="#section-6.2.4-5">¶</a></p>
+<p>Alternatively, instead of sending an ack-eliciting packet, the sender MAY mark<br>any packets still in flight as lost.  Doing so avoids sending an additional<br>packet but increases the risk that loss is declared too aggressively, resulting<br>in an unnecessary rate reduction by the congestion controller.<a href="#section-6.2.4-6">¶</a></p>
+<p>Consecutive PTO periods increase exponentially, and as a result, connection<br>recovery latency increases exponentially as packets continue to be dropped in<br>the network.  Sending two packets on PTO expiration increases resilience to<br>packet drops, thus reducing the probability of consecutive PTO events.<a href="#section-6.2.4-7">¶</a></p>
+<p>When the PTO timer expires multiple times and new data cannot be sent,<br>implementations must choose between sending the same payload every time<br>or sending different payloads.  Sending the same payload may be simpler<br>and ensures the highest priority frames arrive first.  Sending different<br>payloads each time reduces the chances of spurious retransmission.<a href="#section-6.2.4-8">¶</a></p>
+<h3 id="6-3-Handling-Retry-Packets"><a href="#6-3-Handling-Retry-Packets" class="headerlink" title="6.3. Handling Retry Packets"></a><a href="#section-6.3">6.3. </a><a href="#name-handling-retry-packets">Handling Retry Packets</a></h3><p>A Retry packet causes a client to send another Initial packet, effectively<br>restarting the connection process.  A Retry packet indicates that the Initial<br>packet was received but not processed.  A Retry packet cannot be treated as an<br>acknowledgment because it does not indicate that a packet was processed or<br>specify the packet number.<a href="#section-6.3-1">¶</a></p>
+<p>Clients that receive a Retry packet reset congestion control and loss recovery<br>state, including resetting any pending timers.  Other connection state, in<br>particular cryptographic handshake messages, is retained; see<br><a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-17.2.5">Section 17.2.5</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>].<a href="#section-6.3-2">¶</a></p>
+<p>The client MAY compute an RTT estimate to the server as the time period from<br>when the first Initial packet was sent to when a Retry or a Version Negotiation<br>packet is received.  The client MAY use this value in place of its default for<br>the initial RTT estimate.<a href="#section-6.3-3">¶</a></p>
+<h3 id="6-4-Discarding-Keys-and-Packet-State"><a href="#6-4-Discarding-Keys-and-Packet-State" class="headerlink" title="6.4. Discarding Keys and Packet State"></a><a href="#section-6.4">6.4. </a><a href="#name-discarding-keys-and-packet-">Discarding Keys and Packet State</a></h3><p>When Initial and Handshake packet protection keys are discarded<br>(see <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9001#section-4.9">Section 4.9</a> of [<a href="#QUIC-TLS">QUIC-TLS</a>]), all packets that were sent with those keys<br>can no longer be acknowledged because their acknowledgments cannot be processed.<br>The sender MUST discard all recovery state associated with those packets<br>and MUST remove them from the count of bytes in flight.<a href="#section-6.4-1">¶</a></p>
+<p>Endpoints stop sending and receiving Initial packets once they start exchanging<br>Handshake packets; see <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-17.2.2.1">Section 17.2.2.1</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>]. At this point,<br>recovery state for all in-flight Initial packets is discarded.<a href="#section-6.4-2">¶</a></p>
+<p>When 0-RTT is rejected, recovery state for all in-flight 0-RTT packets is<br>discarded.<a href="#section-6.4-3">¶</a></p>
+<p>If a server accepts 0-RTT, but does not buffer 0-RTT packets that arrive<br>before Initial packets, early 0-RTT packets will be declared lost, but that<br>is expected to be infrequent.<a href="#section-6.4-4">¶</a></p>
+<p>It is expected that keys are discarded at some time after the packets<br>encrypted with them are either acknowledged or declared lost. However,<br>Initial and Handshake secrets are discarded as soon as Handshake and<br>1-RTT keys are proven to be available to both client and server; see<br><a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9001#section-4.9.1">Section 4.9.1</a> of [<a href="#QUIC-TLS">QUIC-TLS</a>].<a href="#section-6.4-5">¶</a></p>
+<h2 id="7-Congestion-Control"><a href="#7-Congestion-Control" class="headerlink" title="7. Congestion Control"></a><a href="#section-7">7. </a><a href="#name-congestion-control">Congestion Control</a></h2><p>This document specifies a sender-side congestion controller for QUIC similar to<br>TCP NewReno [<a href="#RFC6582">RFC6582</a>].<a href="#section-7-1">¶</a></p>
+<p>The signals QUIC provides for congestion control are generic and are designed to<br>support different sender-side algorithms. A sender can unilaterally choose a<br>different algorithm to use, such as CUBIC [<a href="#RFC8312">RFC8312</a>].<a href="#section-7-2">¶</a></p>
+<p>If a sender uses a different controller than that specified in this document,<br>the chosen controller MUST conform to the congestion control guidelines<br>specified in <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc8085#section-3.1">Section 3.1</a> of [<a href="#RFC8085">RFC8085</a>].<a href="#section-7-3">¶</a></p>
+<p>Similar to TCP, packets containing only ACK frames do not count toward bytes<br>in flight and are not congestion controlled.  Unlike TCP, QUIC can detect the<br>loss of these packets and MAY use that information to adjust the congestion<br>controller or the rate of ACK-only packets being sent, but this document does<br>not describe a mechanism for doing so.<a href="#section-7-4">¶</a></p>
+<p>The congestion controller is per path, so packets sent on other paths do not<br>alter the current path’s congestion controller, as described in<br><a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-9.4">Section 9.4</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>].<a href="#section-7-5">¶</a></p>
+<p>The algorithm in this document specifies and uses the controller’s congestion<br>window in bytes.<a href="#section-7-6">¶</a></p>
+<p>An endpoint MUST NOT send a packet if it would cause bytes_in_flight (see<br><a href="#vars-of-interest">Appendix B.2</a>) to be larger than the congestion window, unless the packet<br>is sent on a PTO timer expiration (see <a href="#pto">Section 6.2</a>) or when entering recovery<br>(see <a href="#recovery-period">Section 7.3.2</a>).<a href="#section-7-7">¶</a></p>
+<h3 id="7-1-Explicit-Congestion-Notification"><a href="#7-1-Explicit-Congestion-Notification" class="headerlink" title="7.1. Explicit Congestion Notification"></a><a href="#section-7.1">7.1. </a><a href="#name-explicit-congestion-notific">Explicit Congestion Notification</a></h3><p>If a path has been validated to support Explicit Congestion Notification (ECN)<br>[<a href="#RFC3168">RFC3168</a>][<a href="#RFC8311">RFC8311</a>], QUIC treats a Congestion Experienced (CE) codepoint<br>in the IP header as a signal of congestion. This document specifies an<br>endpoint’s response when the peer-reported ECN-CE count increases; see <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-13.4.2">Section 13.4.2</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>].<a href="#section-7.1-1">¶</a></p>
+<h3 id="7-2-Initial-and-Minimum-Congestion-Window"><a href="#7-2-Initial-and-Minimum-Congestion-Window" class="headerlink" title="7.2. Initial and Minimum Congestion Window"></a><a href="#section-7.2">7.2. </a><a href="#name-initial-and-minimum-congest">Initial and Minimum Congestion Window</a></h3><p>QUIC begins every connection in slow start with the congestion window set to an<br>initial value.  Endpoints SHOULD use an initial congestion window of ten times<br>the maximum datagram size (max_datagram_size), while limiting the window to the<br>larger of 14,720 bytes or twice the maximum datagram size. This follows the<br>analysis and recommendations in [<a href="#RFC6928">RFC6928</a>], increasing the byte limit to<br>account for the smaller 8-byte overhead of UDP compared to the 20-byte overhead<br>for TCP.<a href="#section-7.2-1">¶</a></p>
+<p>If the maximum datagram size changes during the connection, the initial<br>congestion window SHOULD be recalculated with the new size.  If the maximum<br>datagram size is decreased in order to complete the handshake, the<br>congestion window SHOULD be set to the new initial congestion window.<a href="#section-7.2-2">¶</a></p>
+<p>Prior to validating the client’s address, the server can be further limited by<br>the anti-amplification limit as specified in <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-8.1">Section 8.1</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>].<br>Though the anti-amplification limit can prevent the congestion window from<br>being fully utilized and therefore slow down the increase in congestion window,<br>it does not directly affect the congestion window.<a href="#section-7.2-3">¶</a></p>
+<p>The minimum congestion window is the smallest value the congestion window can<br>attain in response to loss, an increase in the peer-reported ECN-CE count,<br>or persistent congestion.  The RECOMMENDED value is 2 * max_datagram_size.<a href="#section-7.2-4">¶</a></p>
+<h3 id="7-3-Congestion-Control-States"><a href="#7-3-Congestion-Control-States" class="headerlink" title="7.3. Congestion Control States"></a><a href="#section-7.3">7.3. </a><a href="#name-congestion-control-states">Congestion Control States</a></h3><p>The NewReno congestion controller described in this document has three<br>distinct states, as shown in <a href="#fig-cc-fsm">Figure 1</a>.<a href="#section-7.3-1">¶</a></p>
+<pre><code>                 New path or      +------------+
+            persistent congestion |   Slow     |
+        (O)----------------------&gt;|   Start    |
+                                  +------------+
+                                        |
+                                Loss or |
+                        ECN-CE increase |
+                                        v
+ +------------+     Loss or       +------------+
+ | Congestion |  ECN-CE increase  |  Recovery  |
+ | Avoidance  |------------------&gt;|   Period   |
+ +------------+                   +------------+
+           ^                            |
+           |                            |
+           +----------------------------+
+              Acknowledgment of packet
+                sent during recovery
+</code></pre>
+<p><a href="#figure-1">Figure 1</a>:<br><a href="#name-congestion-control-states-a">Congestion Control States and Transitions</a></p>
+<p>These states and the transitions between them are described in subsequent<br>sections.<a href="#section-7.3-3">¶</a></p>
+<h4 id="7-3-1-Slow-Start"><a href="#7-3-1-Slow-Start" class="headerlink" title="7.3.1. Slow Start"></a><a href="#section-7.3.1">7.3.1. </a><a href="#name-slow-start">Slow Start</a></h4><p>A NewReno sender is in slow start any time the congestion window is below the<br>slow start threshold. A sender begins in slow start because the slow start<br>threshold is initialized to an infinite value.<a href="#section-7.3.1-1">¶</a></p>
+<p>While a sender is in slow start, the congestion window increases by the number<br>of bytes acknowledged when each acknowledgment is processed. This results in<br>exponential growth of the congestion window.<a href="#section-7.3.1-2">¶</a></p>
+<p>The sender MUST exit slow start and enter a recovery period when a packet is<br>lost or when the ECN-CE count reported by its peer increases.<a href="#section-7.3.1-3">¶</a></p>
+<p>A sender reenters slow start any time the congestion window is less than the<br>slow start threshold, which only occurs after persistent congestion is<br>declared.<a href="#section-7.3.1-4">¶</a></p>
+<h4 id="7-3-2-Recovery"><a href="#7-3-2-Recovery" class="headerlink" title="7.3.2. Recovery"></a><a href="#section-7.3.2">7.3.2. </a><a href="#name-recovery">Recovery</a></h4><p>A NewReno sender enters a recovery period when it detects the loss of a packet<br>or when the ECN-CE count reported by its peer increases. A sender that is<br>already in a recovery period stays in it and does not reenter it.<a href="#section-7.3.2-1">¶</a></p>
+<p>On entering a recovery period, a sender MUST set the slow start threshold to<br>half the value of the congestion window when loss is detected. The congestion<br>window MUST be set to the reduced value of the slow start threshold before<br>exiting the recovery period.<a href="#section-7.3.2-2">¶</a></p>
+<p>Implementations MAY reduce the congestion window immediately upon entering a<br>recovery period or use other mechanisms, such as Proportional Rate Reduction<br>[<a href="#PRR">PRR</a>], to reduce the congestion window more gradually. If the<br>congestion window is reduced immediately, a single packet can be sent prior to<br>reduction. This speeds up loss recovery if the data in the lost packet is<br>retransmitted and is similar to TCP as described in <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc6675#section-5">Section 5</a> of [<a href="#RFC6675">RFC6675</a>].<a href="#section-7.3.2-3">¶</a></p>
+<p>The recovery period aims to limit congestion window reduction to once per round<br>trip. Therefore, during a recovery period, the congestion window does not change<br>in response to new losses or increases in the ECN-CE count.<a href="#section-7.3.2-4">¶</a></p>
+<p>A recovery period ends and the sender enters congestion avoidance when a packet<br>sent during the recovery period is acknowledged. This is slightly different<br>from TCP’s definition of recovery, which ends when the lost segment that<br>started recovery is acknowledged [<a href="#RFC5681">RFC5681</a>].<a href="#section-7.3.2-5">¶</a></p>
+<h4 id="7-3-3-Congestion-Avoidance"><a href="#7-3-3-Congestion-Avoidance" class="headerlink" title="7.3.3. Congestion Avoidance"></a><a href="#section-7.3.3">7.3.3. </a><a href="#name-congestion-avoidance">Congestion Avoidance</a></h4><p>A NewReno sender is in congestion avoidance any time the congestion window is<br>at or above the slow start threshold and not in a recovery period.<a href="#section-7.3.3-1">¶</a></p>
+<p>A sender in congestion avoidance uses an Additive Increase Multiplicative<br>Decrease (AIMD) approach that MUST limit the increase to the congestion window<br>to at most one maximum datagram size for each congestion window that is<br>acknowledged.<a href="#section-7.3.3-2">¶</a></p>
+<p>The sender exits congestion avoidance and enters a recovery period when a<br>packet is lost or when the ECN-CE count reported by its peer increases.<a href="#section-7.3.3-3">¶</a></p>
+<h3 id="7-4-Ignoring-Loss-of-Undecryptable-Packets"><a href="#7-4-Ignoring-Loss-of-Undecryptable-Packets" class="headerlink" title="7.4. Ignoring Loss of Undecryptable Packets"></a><a href="#section-7.4">7.4. </a><a href="#name-ignoring-loss-of-undecrypta">Ignoring Loss of Undecryptable Packets</a></h3><p>During the handshake, some packet protection keys might not be available when<br>a packet arrives, and the receiver can choose to drop the packet. In particular,<br>Handshake and 0-RTT packets cannot be processed until the Initial packets<br>arrive, and 1-RTT packets cannot be processed until the handshake completes.<br>Endpoints MAY ignore the loss of Handshake, 0-RTT, and 1-RTT packets that might<br>have arrived before the peer had packet protection keys to process those<br>packets. Endpoints MUST NOT ignore the loss of packets that were sent after<br>the earliest acknowledged packet in a given packet number space.<a href="#section-7.4-1">¶</a></p>
+<h3 id="7-5-Probe-Timeout"><a href="#7-5-Probe-Timeout" class="headerlink" title="7.5. Probe Timeout"></a><a href="#section-7.5">7.5. </a><a href="#name-probe-timeout-2">Probe Timeout</a></h3><p>Probe packets MUST NOT be blocked by the congestion controller.  A sender MUST<br>however count these packets as being additionally in flight, since these packets<br>add network load without establishing packet loss.  Note that sending probe<br>packets might cause the sender’s bytes in flight to exceed the congestion window<br>until an acknowledgment is received that establishes loss or delivery of<br>packets.<a href="#section-7.5-1">¶</a></p>
+<h3 id="7-6-Persistent-Congestion"><a href="#7-6-Persistent-Congestion" class="headerlink" title="7.6. Persistent Congestion"></a><a href="#section-7.6">7.6. </a><a href="#name-persistent-congestion">Persistent Congestion</a></h3><p>When a sender establishes loss of all packets sent over a long enough duration,<br>the network is considered to be experiencing persistent congestion.<a href="#section-7.6-1">¶</a></p>
+<h4 id="7-6-1-Duration"><a href="#7-6-1-Duration" class="headerlink" title="7.6.1. Duration"></a><a href="#section-7.6.1">7.6.1. </a><a href="#name-duration">Duration</a></h4><p>The persistent congestion duration is computed as follows:<a href="#section-7.6.1-1">¶</a></p>
+<pre><code>(smoothed_rtt + max(4*rttvar, kGranularity) + max_ack_delay) *
+    kPersistentCongestionThreshold
+</code></pre>
+<p><a href="#section-7.6.1-2">¶</a></p>
+<p>Unlike the PTO computation in <a href="#pto">Section 6.2</a>, this duration includes the max_ack_delay<br>irrespective of the packet number spaces in which losses are established.<a href="#section-7.6.1-3">¶</a></p>
+<p>This duration allows a sender to send as many packets before establishing<br>persistent congestion, including some in response to PTO expiration, as TCP does<br>with Tail Loss Probes [<a href="#RFC8985">RFC8985</a>] and an RTO [<a href="#RFC5681">RFC5681</a>].<a href="#section-7.6.1-4">¶</a></p>
+<p>Larger values of kPersistentCongestionThreshold cause the sender to become less<br>responsive to persistent congestion in the network, which can result in<br>aggressive sending into a congested network. Too small a value can result in a<br>sender declaring persistent congestion unnecessarily, resulting in reduced<br>throughput for the sender.<a href="#section-7.6.1-5">¶</a></p>
+<p>The RECOMMENDED value for kPersistentCongestionThreshold is 3, which results in<br>behavior that is approximately equivalent to a TCP sender declaring an RTO after<br>two TLPs.<a href="#section-7.6.1-6">¶</a></p>
+<p>This design does not use consecutive PTO events to establish persistent<br>congestion, since application patterns impact PTO expiration. For example, a<br>sender that sends small amounts of data with silence periods between them<br>restarts the PTO timer every time it sends, potentially preventing the PTO timer<br>from expiring for a long period of time, even when no acknowledgments are being<br>received. The use of a duration enables a sender to establish persistent<br>congestion without depending on PTO expiration.<a href="#section-7.6.1-7">¶</a></p>
+<h4 id="7-6-2-Establishing-Persistent-Congestion"><a href="#7-6-2-Establishing-Persistent-Congestion" class="headerlink" title="7.6.2. Establishing Persistent Congestion"></a><a href="#section-7.6.2">7.6.2. </a><a href="#name-establishing-persistent-con">Establishing Persistent Congestion</a></h4><p>A sender establishes persistent congestion after the receipt of an<br>acknowledgment if two packets that are ack-eliciting are declared lost, and:<a href="#section-7.6.2-1">¶</a></p>
+<ul>
+<li>across all packet number spaces, none of the packets sent between the send<br>times of these two packets are acknowledged;<a href="#section-7.6.2-2.1">¶</a></li>
+<li>the duration between the send times of these two packets exceeds the<br>persistent congestion duration (<a href="#pc-duration">Section 7.6.1</a>); and<a href="#section-7.6.2-2.2">¶</a></li>
+<li>a prior RTT sample existed when these two packets were sent.<a href="#section-7.6.2-2.3">¶</a></li>
+</ul>
+<p>These two packets MUST be ack-eliciting, since a receiver is required to<br>acknowledge only ack-eliciting packets within its maximum acknowledgment delay;<br>see <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-13.2">Section 13.2</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>].<a href="#section-7.6.2-3">¶</a></p>
+<p>The persistent congestion period SHOULD NOT start until there is at least one<br>RTT sample. Before the first RTT sample, a sender arms its PTO timer based on<br>the initial RTT (<a href="#pto-handshake">Section 6.2.2</a>), which could be substantially larger than<br>the actual RTT. Requiring a prior RTT sample prevents a sender from establishing<br>persistent congestion with potentially too few probes.<a href="#section-7.6.2-4">¶</a></p>
+<p>Since network congestion is not affected by packet number spaces, persistent<br>congestion SHOULD consider packets sent across packet number spaces. A sender<br>that does not have state for all packet number spaces or an implementation that<br>cannot compare send times across packet number spaces MAY use state for just the<br>packet number space that was acknowledged. This might result in erroneously<br>declaring persistent congestion, but it will not lead to a failure to detect<br>persistent congestion.<a href="#section-7.6.2-5">¶</a></p>
+<p>When persistent congestion is declared, the sender’s congestion window MUST be<br>reduced to the minimum congestion window (kMinimumWindow), similar to a TCP<br>sender’s response on an RTO [<a href="#RFC5681">RFC5681</a>].<a href="#section-7.6.2-6">¶</a></p>
+<h4 id="7-6-3-Example"><a href="#7-6-3-Example" class="headerlink" title="7.6.3. Example"></a><a href="#section-7.6.3">7.6.3. </a><a href="#name-example">Example</a></h4><p>The following example illustrates how a sender might establish persistent<br>congestion. Assume:<a href="#section-7.6.3-1">¶</a></p>
+<pre><code>smoothed_rtt + max(4*rttvar, kGranularity) + max_ack_delay = 2
+kPersistentCongestionThreshold = 3
+</code></pre>
+<p><a href="#section-7.6.3-2">¶</a></p>
+<p>Consider the following sequence of events:<a href="#section-7.6.3-3">¶</a><br><a href="#table-1">Table 1</a>TimeActiont=0Send packet #1 (application data)t=1Send packet #2 (application data)t=1.2Receive acknowledgment of #1t=2Send packet #3 (application data)t=3Send packet #4 (application data)t=4Send packet #5 (application data)t=5Send packet #6 (application data)t=6Send packet #7 (application data)t=8Send packet #8 (PTO 1)t=12Send packet #9 (PTO 2)t=12.2Receive acknowledgment of #9<br>Packets 2 through 8 are declared lost when the acknowledgment for packet 9 is<br>received at <code>t = 12.2</code>.<a href="#section-7.6.3-5">¶</a></p>
+<p>The congestion period is calculated as the time between the oldest and newest<br>lost packets: <code>8 - 1 = 7</code>.  The persistent congestion duration is <code>2 * 3 = 6</code>.<br>Because the threshold was reached and because none of the packets between the<br>oldest and the newest lost packets were acknowledged, the network is considered<br>to have experienced persistent congestion.<a href="#section-7.6.3-6">¶</a></p>
+<p>While this example shows PTO expiration, they are not required for persistent<br>congestion to be established.<a href="#section-7.6.3-7">¶</a></p>
+<h3 id="7-7-Pacing"><a href="#7-7-Pacing" class="headerlink" title="7.7. Pacing"></a><a href="#section-7.7">7.7. </a><a href="#name-pacing">Pacing</a></h3><p>A sender SHOULD pace sending of all in-flight packets based on input from the<br>congestion controller.<a href="#section-7.7-1">¶</a></p>
+<p>Sending multiple packets into the network without any delay between them creates<br>a packet burst that might cause short-term congestion and losses. Senders MUST<br>either use pacing or limit such bursts. Senders SHOULD limit bursts to the<br>initial congestion window; see <a href="#initial-cwnd">Section 7.2</a>. A sender with knowledge that<br>the network path to the receiver can absorb larger bursts MAY use a higher<br>limit.<a href="#section-7.7-2">¶</a></p>
+<p>An implementation should take care to architect its congestion controller to<br>work well with a pacer.  For instance, a pacer might wrap the congestion<br>controller and control the availability of the congestion window, or a pacer<br>might pace out packets handed to it by the congestion controller.<a href="#section-7.7-3">¶</a></p>
+<p>Timely delivery of ACK frames is important for efficient loss recovery. To avoid<br>delaying their delivery to the peer, packets containing only ACK frames SHOULD<br>therefore not be paced.<a href="#section-7.7-4">¶</a></p>
+<p>Endpoints can implement pacing as they choose. A perfectly paced sender spreads<br>packets exactly evenly over time. For a window-based congestion controller, such<br>as the one in this document, that rate can be computed by averaging the<br>congestion window over the RTT. Expressed as a rate in units of<br>bytes per time, where congestion_window is in bytes:<a href="#section-7.7-5">¶</a></p>
+<pre><code>rate = N * congestion_window / smoothed_rtt
+</code></pre>
+<p><a href="#section-7.7-6">¶</a></p>
+<p>Or expressed as an inter-packet interval in units of time:<a href="#section-7.7-7">¶</a></p>
+<pre><code>interval = ( smoothed_rtt * packet_size / congestion_window ) / N
+</code></pre>
+<p><a href="#section-7.7-8">¶</a></p>
+<p>Using a value for <code>N</code> that is small, but at least 1 (for example, 1.25) ensures<br>that variations in RTT do not result in underutilization of the<br>congestion window.<a href="#section-7.7-9">¶</a></p>
+<p>Practical considerations, such as packetization, scheduling delays, and<br>computational efficiency, can cause a sender to deviate from this rate over time<br>periods that are much shorter than an RTT.<a href="#section-7.7-10">¶</a></p>
+<p>One possible implementation strategy for pacing uses a leaky bucket algorithm,<br>where the capacity of the “bucket” is limited to the maximum burst size and the<br>rate the “bucket” fills is determined by the above function.<a href="#section-7.7-11">¶</a></p>
+<h3 id="7-8-Underutilizing-the-Congestion-Window"><a href="#7-8-Underutilizing-the-Congestion-Window" class="headerlink" title="7.8. Underutilizing the Congestion Window"></a><a href="#section-7.8">7.8. </a><a href="#name-underutilizing-the-congesti">Underutilizing the Congestion Window</a></h3><p>When bytes in flight is smaller than the congestion window and sending is not<br>pacing limited, the congestion window is underutilized. This can happen due to<br>insufficient application data or flow control limits. When this occurs,<br>the congestion window SHOULD NOT be increased in either slow start or<br>congestion avoidance.<a href="#section-7.8-1">¶</a></p>
+<p>A sender that paces packets (see <a href="#pacing">Section 7.7</a>) might delay sending packets<br>and not fully utilize the congestion window due to this delay. A sender<br>SHOULD NOT consider itself application limited if it would have fully<br>utilized the congestion window without pacing delay.<a href="#section-7.8-2">¶</a></p>
+<p>A sender MAY implement alternative mechanisms to update its congestion window<br>after periods of underutilization, such as those proposed for TCP in<br>[<a href="#RFC7661">RFC7661</a>].<a href="#section-7.8-3">¶</a></p>
+<h2 id="8-Security-Considerations"><a href="#8-Security-Considerations" class="headerlink" title="8. Security Considerations"></a><a href="#section-8">8. </a><a href="#name-security-considerations">Security Considerations</a></h2><h3 id="8-1-Loss-and-Congestion-Signals"><a href="#8-1-Loss-and-Congestion-Signals" class="headerlink" title="8.1. Loss and Congestion Signals"></a><a href="#section-8.1">8.1. </a><a href="#name-loss-and-congestion-signals">Loss and Congestion Signals</a></h3><p>Loss detection and congestion control fundamentally involve the consumption of<br>signals, such as delay, loss, and ECN markings, from unauthenticated<br>entities. An attacker can cause endpoints to reduce their sending rate by<br>manipulating these signals: by dropping packets, by altering path delay<br>strategically, or by changing ECN codepoints.<a href="#section-8.1-1">¶</a></p>
+<h3 id="8-2-Traffic-Analysis"><a href="#8-2-Traffic-Analysis" class="headerlink" title="8.2. Traffic Analysis"></a><a href="#section-8.2">8.2. </a><a href="#name-traffic-analysis">Traffic Analysis</a></h3><p>Packets that carry only ACK frames can be heuristically identified by observing<br>packet size.  Acknowledgment patterns may expose information about link<br>characteristics or application behavior.  To reduce leaked information,<br>endpoints can bundle acknowledgments with other frames, or they can use PADDING<br>frames at a potential cost to performance.<a href="#section-8.2-1">¶</a></p>
+<h3 id="8-3-Misreporting-ECN-Markings"><a href="#8-3-Misreporting-ECN-Markings" class="headerlink" title="8.3. Misreporting ECN Markings"></a><a href="#section-8.3">8.3. </a><a href="#name-misreporting-ecn-markings">Misreporting ECN Markings</a></h3><p>A receiver can misreport ECN markings to alter the congestion response of a<br>sender.  Suppressing reports of ECN-CE markings could cause a sender to<br>increase their send rate.  This increase could result in congestion and loss.<a href="#section-8.3-1">¶</a></p>
+<p>A sender can detect suppression of reports by marking occasional packets that it<br>sends with an ECN-CE marking. If a packet sent with an ECN-CE marking is not<br>reported as having been CE marked when the packet is acknowledged, then the<br>sender can disable ECN for that path by not setting ECN-Capable Transport (ECT)<br>codepoints in subsequent packets sent on that path [<a href="#RFC3168">RFC3168</a>].<a href="#section-8.3-2">¶</a></p>
+<p>Reporting additional ECN-CE markings will cause a sender to reduce their sending<br>rate, which is similar in effect to advertising reduced connection flow control<br>limits and so no advantage is gained by doing so.<a href="#section-8.3-3">¶</a></p>
+<p>Endpoints choose the congestion controller that they use. Congestion controllers<br>respond to reports of ECN-CE by reducing their rate, but the response may vary.<br>Markings can be treated as equivalent to loss [<a href="#RFC3168">RFC3168</a>], but other<br>responses can be specified, such as [<a href="#RFC8511">RFC8511</a>] or [<a href="#RFC8311">RFC8311</a>].<a href="#section-8.3-4">¶</a></p>
+<h2 id="9-References"><a href="#9-References" class="headerlink" title="9. References"></a><a href="#section-9">9. </a><a href="#name-references">References</a></h2><h3 id="9-1-Normative-References"><a href="#9-1-Normative-References" class="headerlink" title="9.1. Normative References"></a><a href="#section-9.1">9.1. </a><a href="#name-normative-references">Normative References</a></h3><p>[QUIC-TLS]Thomson, M., Ed. and S. Turner, Ed., “Using TLS to Secure QUIC”, RFC 9001, DOI 10.17487/RFC9001, May 2021, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc9001">https://www.rfc-editor.org/info/rfc9001</a>&gt;. [QUIC-TRANSPORT]Iyengar, J., Ed. and M. Thomson, Ed., “QUIC: A UDP-Based Multiplexed and Secure Transport”, RFC 9000, DOI 10.17487/RFC9000, May 2021, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc9000">https://www.rfc-editor.org/info/rfc9000</a>&gt;. [RFC2119]Bradner, S., “Key words for use in RFCs to Indicate Requirement Levels”, BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;. [RFC3168]Ramakrishnan, K., Floyd, S., and D. Black, “The Addition of Explicit Congestion Notification (ECN) to IP”, RFC 3168, DOI 10.17487/RFC3168, September 2001, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc3168">https://www.rfc-editor.org/info/rfc3168</a>&gt;. [RFC8085]Eggert, L., Fairhurst, G., and G. Shepherd, “UDP Usage Guidelines”, BCP 145, RFC 8085, DOI 10.17487/RFC8085, March 2017, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc8085">https://www.rfc-editor.org/info/rfc8085</a>&gt;. [RFC8174]Leiba, B., “Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words”, BCP 14, RFC 8174, DOI 10.17487/RFC8174, May 2017, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc8174">https://www.rfc-editor.org/info/rfc8174</a>&gt;. </p>
+<h3 id="9-2-Informative-References"><a href="#9-2-Informative-References" class="headerlink" title="9.2. Informative References"></a><a href="#section-9.2">9.2. </a><a href="#name-informative-references">Informative References</a></h3><p>[FACK]Mathis, M. and J. Mahdavi, “Forward acknowledgement: Refining TCP Congestion Control”, ACM SIGCOMM Computer Communication Review, DOI 10.1145/248157.248181, August 1996, &lt;<a target="_blank" rel="noopener" href="https://doi.org/10.1145/248157.248181">https://doi.org/10.1145/248157.248181</a>&gt;. [PRR]Mathis, M., Dukkipati, N., and Y. Cheng, “Proportional Rate Reduction for TCP”, RFC 6937, DOI 10.17487/RFC6937, May 2013, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc6937">https://www.rfc-editor.org/info/rfc6937</a>&gt;. [RETRANSMISSION]Karn, P. and C. Partridge, “Improving Round-Trip Time Estimates in Reliable Transport Protocols”, ACM Transactions on Computer Systems, DOI 10.1145/118544.118549, November 1991, &lt;<a target="_blank" rel="noopener" href="https://doi.org/10.1145/118544.118549">https://doi.org/10.1145/118544.118549</a>&gt;. [RFC2018]Mathis, M., Mahdavi, J., Floyd, S., and A. Romanow, “TCP Selective Acknowledgment Options”, RFC 2018, DOI 10.17487/RFC2018, October 1996, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc2018">https://www.rfc-editor.org/info/rfc2018</a>&gt;. [RFC3465]Allman, M., “TCP Congestion Control with Appropriate Byte Counting (ABC)”, RFC 3465, DOI 10.17487/RFC3465, February 2003, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc3465">https://www.rfc-editor.org/info/rfc3465</a>&gt;. [RFC5681]Allman, M., Paxson, V., and E. Blanton, “TCP Congestion Control”, RFC 5681, DOI 10.17487/RFC5681, September 2009, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc5681">https://www.rfc-editor.org/info/rfc5681</a>&gt;. [RFC5682]Sarolahti, P., Kojo, M., Yamamoto, K., and M. Hata, “Forward RTO-Recovery (F-RTO): An Algorithm for Detecting Spurious Retransmission Timeouts with TCP”, RFC 5682, DOI 10.17487/RFC5682, September 2009, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc5682">https://www.rfc-editor.org/info/rfc5682</a>&gt;. [RFC5827]Allman, M., Avrachenkov, K., Ayesta, U., Blanton, J., and P. Hurtig, “Early Retransmit for TCP and Stream Control Transmission Protocol (SCTP)”, RFC 5827, DOI 10.17487/RFC5827, May 2010, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc5827">https://www.rfc-editor.org/info/rfc5827</a>&gt;. [RFC6298]Paxson, V., Allman, M., Chu, J., and M. Sargent, “Computing TCP’s Retransmission Timer”, RFC 6298, DOI 10.17487/RFC6298, June 2011, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc6298">https://www.rfc-editor.org/info/rfc6298</a>&gt;. [RFC6582]Henderson, T., Floyd, S., Gurtov, A., and Y. Nishida, “The NewReno Modification to TCP’s Fast Recovery Algorithm”, RFC 6582, DOI 10.17487/RFC6582, April 2012, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc6582">https://www.rfc-editor.org/info/rfc6582</a>&gt;. [RFC6675]Blanton, E., Allman, M., Wang, L., Jarvinen, I., Kojo, M., and Y. Nishida, “A Conservative Loss Recovery Algorithm Based on Selective Acknowledgment (SACK) for TCP”, RFC 6675, DOI 10.17487/RFC6675, August 2012, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc6675">https://www.rfc-editor.org/info/rfc6675</a>&gt;. [RFC6928]Chu, J., Dukkipati, N., Cheng, Y., and M. Mathis, “Increasing TCP’s Initial Window”, RFC 6928, DOI 10.17487/RFC6928, April 2013, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc6928">https://www.rfc-editor.org/info/rfc6928</a>&gt;. [RFC7661]Fairhurst, G., Sathiaseelan, A., and R. Secchi, “Updating TCP to Support Rate-Limited Traffic”, RFC 7661, DOI 10.17487/RFC7661, October 2015, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc7661">https://www.rfc-editor.org/info/rfc7661</a>&gt;. [RFC8311]Black, D., “Relaxing Restrictions on Explicit Congestion Notification (ECN) Experimentation”, RFC 8311, DOI 10.17487/RFC8311, January 2018, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc8311">https://www.rfc-editor.org/info/rfc8311</a>&gt;. [RFC8312]Rhee, I., Xu, L., Ha, S., Zimmermann, A., Eggert, L., and R. Scheffenegger, “CUBIC for Fast Long-Distance Networks”, RFC 8312, DOI 10.17487/RFC8312, February 2018, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc8312">https://www.rfc-editor.org/info/rfc8312</a>&gt;. [RFC8511]Khademi, N., Welzl, M., Armitage, G., and G. Fairhurst, “TCP Alternative Backoff with ECN (ABE)”, RFC 8511, DOI 10.17487/RFC8511, December 2018, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc8511">https://www.rfc-editor.org/info/rfc8511</a>&gt;. [RFC8985]Cheng, Y., Cardwell, N., Dukkipati, N., and P. Jha, “The RACK-TLP Loss Detection Algorithm for TCP”, RFC 8985, DOI 10.17487/RFC8985, February 2021, &lt;<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc8985">https://www.rfc-editor.org/info/rfc8985</a>&gt;. </p>
+<h2 id="Appendix-A-Loss-Recovery-Pseudocode"><a href="#Appendix-A-Loss-Recovery-Pseudocode" class="headerlink" title="Appendix A. Loss Recovery Pseudocode"></a><a href="#section-appendix.a">Appendix A. </a><a href="#name-loss-recovery-pseudocode">Loss Recovery Pseudocode</a></h2><p>We now describe an example implementation of the loss detection mechanisms<br>described in <a href="#loss-detection">Section 6</a>.<a href="#section-appendix.a-1">¶</a></p>
+<p>The pseudocode segments in this section are licensed as Code Components; see the<br>copyright notice.<a href="#section-appendix.a-2">¶</a></p>
+<h2 id="A-1-Tracking-Sent-Packets"><a href="#A-1-Tracking-Sent-Packets" class="headerlink" title="A.1. Tracking Sent Packets"></a><a href="#section-a.1">A.1. </a><a href="#name-tracking-sent-packets">Tracking Sent Packets</a></h2><p>To correctly implement congestion control, a QUIC sender tracks every<br>ack-eliciting packet until the packet is acknowledged or lost.<br>It is expected that implementations will be able to access this information by<br>packet number and crypto context and store the per-packet fields<br>(<a href="#sent-packets-fields">Appendix A.1.1</a>) for loss recovery and congestion control.<a href="#section-a.1-1">¶</a></p>
+<p>After a packet is declared lost, the endpoint can still maintain state for it<br>for an amount of time to allow for packet reordering; see <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-13.3">Section 13.3</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>]. This enables a sender to detect spurious retransmissions.<a href="#section-a.1-2">¶</a></p>
+<p>Sent packets are tracked for each packet number space, and ACK<br>processing only applies to a single space.<a href="#section-a.1-3">¶</a></p>
+<h3 id="A-1-1-Sent-Packet-Fields"><a href="#A-1-1-Sent-Packet-Fields" class="headerlink" title="A.1.1. Sent Packet Fields"></a><a href="#section-a.1.1">A.1.1. </a><a href="#name-sent-packet-fields">Sent Packet Fields</a></h3><p>packet_number:<br>The packet number of the sent packet.<a href="#section-a.1.1-1.2.1">¶</a><br>ack_eliciting:<br>A Boolean that indicates whether a packet is ack-eliciting.<br>If true, it is expected that an acknowledgment will be received,<br>though the peer could delay sending the ACK frame containing it<br>by up to the max_ack_delay.<a href="#section-a.1.1-1.4.1">¶</a><br>in_flight:<br>A Boolean that indicates whether the packet counts toward bytes in<br>flight.<a href="#section-a.1.1-1.6.1">¶</a><br>sent_bytes:<br>The number of bytes sent in the packet, not including UDP or IP<br>overhead, but including QUIC framing overhead.<a href="#section-a.1.1-1.8.1">¶</a><br>time_sent:<br>The time the packet was sent.<a href="#section-a.1.1-1.10.1">¶</a></p>
+<h2 id="A-2-Constants-of-Interest"><a href="#A-2-Constants-of-Interest" class="headerlink" title="A.2. Constants of Interest"></a><a href="#section-a.2">A.2. </a><a href="#name-constants-of-interest">Constants of Interest</a></h2><p>Constants used in loss recovery are based on a combination of RFCs, papers, and<br>common practice.<a href="#section-a.2-1">¶</a><br>kPacketThreshold:<br>Maximum reordering in packets before packet threshold loss detection<br>considers a packet lost. The value recommended in <a href="#packet-threshold">Section 6.1.1</a> is 3.<a href="#section-a.2-2.2.1">¶</a><br>kTimeThreshold:<br>Maximum reordering in time before time threshold loss detection<br>considers a packet lost. Specified as an RTT multiplier. The value<br>recommended in <a href="#time-threshold">Section 6.1.2</a> is 9/8.<a href="#section-a.2-2.4.1">¶</a><br>kGranularity:<br>Timer granularity. This is a system-dependent value, and <a href="#time-threshold">Section 6.1.2</a><br>recommends a value of 1 ms.<a href="#section-a.2-2.6.1">¶</a><br>kInitialRtt:<br>The RTT used before an RTT sample is taken. The value recommended in<br><a href="#pto-handshake">Section 6.2.2</a> is 333 ms.<a href="#section-a.2-2.8.1">¶</a><br>kPacketNumberSpace:<br>An enum to enumerate the three packet number spaces:<a href="#section-a.2-2.10.1">¶</a></p>
+<pre><code>enum kPacketNumberSpace &#123;
+  Initial,
+  Handshake,
+  ApplicationData,
+&#125;
+</code></pre>
+<p><a href="#section-a.2-3">¶</a></p>
+<h2 id="A-3-Variables-of-Interest"><a href="#A-3-Variables-of-Interest" class="headerlink" title="A.3. Variables of Interest"></a><a href="#section-a.3">A.3. </a><a href="#name-variables-of-interest">Variables of Interest</a></h2><p>Variables required to implement the congestion control mechanisms<br>are described in this section.<a href="#section-a.3-1">¶</a><br>latest_rtt:<br>The most recent RTT measurement made when receiving an acknowledgment for<br>a previously unacknowledged packet.<a href="#section-a.3-2.2.1">¶</a><br>smoothed_rtt:<br>The smoothed RTT of the connection, computed as described in<br><a href="#smoothed-rtt">Section 5.3</a>.<a href="#section-a.3-2.4.1">¶</a><br>rttvar:<br>The RTT variation, computed as described in <a href="#smoothed-rtt">Section 5.3</a>.<a href="#section-a.3-2.6.1">¶</a><br>min_rtt:<br>The minimum RTT seen over a period of time, ignoring acknowledgment delay, as<br>described in <a href="#min-rtt">Section 5.2</a>.<a href="#section-a.3-2.8.1">¶</a><br>first_rtt_sample:<br>The time that the first RTT sample was obtained.<a href="#section-a.3-2.10.1">¶</a><br>max_ack_delay:<br>The maximum amount of time by which the receiver intends to delay<br>acknowledgments for packets in the Application Data packet number<br>space, as defined by the eponymous transport parameter (<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-18.2">Section 18.2</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>]). Note that the actual ack_delay in a received<br>ACK frame may be larger due to late timers, reordering, or loss.<a href="#section-a.3-2.12.1">¶</a><br>loss_detection_timer:<br>Multi-modal timer used for loss detection.<a href="#section-a.3-2.14.1">¶</a><br>pto_count:<br>The number of times a PTO has been sent without receiving an acknowledgment.<a href="#section-a.3-2.16.1">¶</a><br>time_of_last_ack_eliciting_packet[kPacketNumberSpace]:<br>The time the most recent ack-eliciting packet was sent.<a href="#section-a.3-2.18.1">¶</a><br>largest_acked_packet[kPacketNumberSpace]:<br>The largest packet number acknowledged in the packet number space so far.<a href="#section-a.3-2.20.1">¶</a><br>loss_time[kPacketNumberSpace]:<br>The time at which the next packet in that packet number space can be<br>considered lost based on exceeding the reordering window in time.<a href="#section-a.3-2.22.1">¶</a><br>sent_packets[kPacketNumberSpace]:<br>An association of packet numbers in a packet number space to information<br>about them.  Described in detail above in <a href="#tracking-sent-packets">Appendix A.1</a>.<a href="#section-a.3-2.24.1">¶</a></p>
+<h2 id="A-4-Initialization"><a href="#A-4-Initialization" class="headerlink" title="A.4. Initialization"></a><a href="#section-a.4">A.4. </a><a href="#name-initialization">Initialization</a></h2><p>At the beginning of the connection, initialize the loss detection variables as<br>follows:<a href="#section-a.4-1">¶</a></p>
+<pre><code>loss_detection_timer.reset()
+pto_count = 0
+latest_rtt = 0
+smoothed_rtt = kInitialRtt
+rttvar = kInitialRtt / 2
+min_rtt = 0
+first_rtt_sample = 0
+for pn_space in [ Initial, Handshake, ApplicationData ]:
+  largest_acked_packet[pn_space] = infinite
+  time_of_last_ack_eliciting_packet[pn_space] = 0
+  loss_time[pn_space] = 0
+</code></pre>
+<p><a href="#section-a.4-2">¶</a></p>
+<h2 id="A-5-On-Sending-a-Packet"><a href="#A-5-On-Sending-a-Packet" class="headerlink" title="A.5. On Sending a Packet"></a><a href="#section-a.5">A.5. </a><a href="#name-on-sending-a-packet">On Sending a Packet</a></h2><p>After a packet is sent, information about the packet is stored.  The parameters<br>to OnPacketSent are described in detail above in <a href="#sent-packets-fields">Appendix A.1.1</a>.<a href="#section-a.5-1">¶</a></p>
+<p>Pseudocode for OnPacketSent follows:<a href="#section-a.5-2">¶</a></p>
+<pre><code>OnPacketSent(packet_number, pn_space, ack_eliciting,
+             in_flight, sent_bytes):
+  sent_packets[pn_space][packet_number].packet_number =
+                                           packet_number
+  sent_packets[pn_space][packet_number].time_sent = now()
+  sent_packets[pn_space][packet_number].ack_eliciting =
+                                           ack_eliciting
+  sent_packets[pn_space][packet_number].in_flight = in_flight
+  sent_packets[pn_space][packet_number].sent_bytes = sent_bytes
+  if (in_flight):
+    if (ack_eliciting):
+      time_of_last_ack_eliciting_packet[pn_space] = now()
+    OnPacketSentCC(sent_bytes)
+    SetLossDetectionTimer()
+</code></pre>
+<p><a href="#section-a.5-3">¶</a></p>
+<h2 id="A-6-On-Receiving-a-Datagram"><a href="#A-6-On-Receiving-a-Datagram" class="headerlink" title="A.6. On Receiving a Datagram"></a><a href="#section-a.6">A.6. </a><a href="#name-on-receiving-a-datagram">On Receiving a Datagram</a></h2><p>When a server is blocked by anti-amplification limits, receiving<br>a datagram unblocks it, even if none of the packets in the<br>datagram are successfully processed. In such a case, the PTO<br>timer will need to be rearmed.<a href="#section-a.6-1">¶</a></p>
+<p>Pseudocode for OnDatagramReceived follows:<a href="#section-a.6-2">¶</a></p>
+<pre><code>OnDatagramReceived(datagram):
+  // If this datagram unblocks the server, arm the
+  // PTO timer to avoid deadlock.
+  if (server was at anti-amplification limit):
+    SetLossDetectionTimer()
+    if loss_detection_timer.timeout &lt; now():
+      // Execute PTO if it would have expired
+      // while the amplification limit applied.
+      OnLossDetectionTimeout()
+</code></pre>
+<p><a href="#section-a.6-3">¶</a></p>
+<h2 id="A-7-On-Receiving-an-Acknowledgment"><a href="#A-7-On-Receiving-an-Acknowledgment" class="headerlink" title="A.7. On Receiving an Acknowledgment"></a><a href="#section-a.7">A.7. </a><a href="#name-on-receiving-an-acknowledgm">On Receiving an Acknowledgment</a></h2><p>When an ACK frame is received, it may newly acknowledge any number of packets.<a href="#section-a.7-1">¶</a></p>
+<p>Pseudocode for OnAckReceived and UpdateRtt follow:<a href="#section-a.7-2">¶</a></p>
+<pre><code>IncludesAckEliciting(packets):
+  for packet in packets:
+    if (packet.ack_eliciting):
+      return true
+  return false
+
+OnAckReceived(ack, pn_space):
+  if (largest_acked_packet[pn_space] == infinite):
+    largest_acked_packet[pn_space] = ack.largest_acked
+  else:
+    largest_acked_packet[pn_space] =
+        max(largest_acked_packet[pn_space], ack.largest_acked)
+
+  // DetectAndRemoveAckedPackets finds packets that are newly
+  // acknowledged and removes them from sent_packets.
+  newly_acked_packets =
+      DetectAndRemoveAckedPackets(ack, pn_space)
+  // Nothing to do if there are no newly acked packets.
+  if (newly_acked_packets.empty()):
+    return
+
+  // Update the RTT if the largest acknowledged is newly acked
+  // and at least one ack-eliciting was newly acked.
+  if (newly_acked_packets.largest().packet_number ==
+          ack.largest_acked &amp;&amp;
+      IncludesAckEliciting(newly_acked_packets)):
+    latest_rtt =
+      now() - newly_acked_packets.largest().time_sent
+    UpdateRtt(ack.ack_delay)
+
+  // Process ECN information if present.
+  if (ACK frame contains ECN information):
+      ProcessECN(ack, pn_space)
+
+  lost_packets = DetectAndRemoveLostPackets(pn_space)
+  if (!lost_packets.empty()):
+    OnPacketsLost(lost_packets)
+  OnPacketsAcked(newly_acked_packets)
+
+  // Reset pto_count unless the client is unsure if
+  // the server has validated the client&#39;s address.
+  if (PeerCompletedAddressValidation()):
+    pto_count = 0
+  SetLossDetectionTimer()
+
+
+UpdateRtt(ack_delay):
+  if (first_rtt_sample == 0):
+    min_rtt = latest_rtt
+    smoothed_rtt = latest_rtt
+    rttvar = latest_rtt / 2
+    first_rtt_sample = now()
+    return
+
+  // min_rtt ignores acknowledgment delay.
+  min_rtt = min(min_rtt, latest_rtt)
+  // Limit ack_delay by max_ack_delay after handshake
+  // confirmation.
+  if (handshake confirmed):
+    ack_delay = min(ack_delay, max_ack_delay)
+
+  // Adjust for acknowledgment delay if plausible.
+  adjusted_rtt = latest_rtt
+  if (latest_rtt &gt;= min_rtt + ack_delay):
+    adjusted_rtt = latest_rtt - ack_delay
+
+  rttvar = 3/4 * rttvar + 1/4 * abs(smoothed_rtt - adjusted_rtt)
+  smoothed_rtt = 7/8 * smoothed_rtt + 1/8 * adjusted_rtt
+</code></pre>
+<p><a href="#section-a.7-3">¶</a></p>
+<h2 id="A-8-Setting-the-Loss-Detection-Timer"><a href="#A-8-Setting-the-Loss-Detection-Timer" class="headerlink" title="A.8. Setting the Loss Detection Timer"></a><a href="#section-a.8">A.8. </a><a href="#name-setting-the-loss-detection-">Setting the Loss Detection Timer</a></h2><p>QUIC loss detection uses a single timer for all timeout loss detection.  The<br>duration of the timer is based on the timer’s mode, which is set in the packet<br>and timer events further below.  The function SetLossDetectionTimer defined<br>below shows how the single timer is set.<a href="#section-a.8-1">¶</a></p>
+<p>This algorithm may result in the timer being set in the past, particularly if<br>timers wake up late. Timers set in the past fire immediately.<a href="#section-a.8-2">¶</a></p>
+<p>Pseudocode for SetLossDetectionTimer follows (where the “^” operator represents<br>exponentiation):<a href="#section-a.8-3">¶</a></p>
+<pre><code>GetLossTimeAndSpace():
+  time = loss_time[Initial]
+  space = Initial
+  for pn_space in [ Handshake, ApplicationData ]:
+    if (time == 0 || loss_time[pn_space] &lt; time):
+      time = loss_time[pn_space];
+      space = pn_space
+  return time, space
+
+GetPtoTimeAndSpace():
+  duration = (smoothed_rtt + max(4 * rttvar, kGranularity))
+      * (2 ^ pto_count)
+  // Anti-deadlock PTO starts from the current time
+  if (no ack-eliciting packets in flight):
+    assert(!PeerCompletedAddressValidation())
+    if (has handshake keys):
+      return (now() + duration), Handshake
+    else:
+      return (now() + duration), Initial
+  pto_timeout = infinite
+  pto_space = Initial
+  for space in [ Initial, Handshake, ApplicationData ]:
+    if (no ack-eliciting packets in flight in space):
+        continue;
+    if (space == ApplicationData):
+      // Skip Application Data until handshake confirmed.
+      if (handshake is not confirmed):
+        return pto_timeout, pto_space
+      // Include max_ack_delay and backoff for Application Data.
+      duration += max_ack_delay * (2 ^ pto_count)
+
+    t = time_of_last_ack_eliciting_packet[space] + duration
+    if (t &lt; pto_timeout):
+      pto_timeout = t
+      pto_space = space
+  return pto_timeout, pto_space
+
+PeerCompletedAddressValidation():
+  // Assume clients validate the server&#39;s address implicitly.
+  if (endpoint is server):
+    return true
+  // Servers complete address validation when a
+  // protected packet is received.
+  return has received Handshake ACK ||
+       handshake confirmed
+
+SetLossDetectionTimer():
+  earliest_loss_time, _ = GetLossTimeAndSpace()
+  if (earliest_loss_time != 0):
+    // Time threshold loss detection.
+    loss_detection_timer.update(earliest_loss_time)
+    return
+
+  if (server is at anti-amplification limit):
+    // The server&#39;s timer is not set if nothing can be sent.
+    loss_detection_timer.cancel()
+    return
+
+  if (no ack-eliciting packets in flight &amp;&amp;
+      PeerCompletedAddressValidation()):
+    // There is nothing to detect lost, so no timer is set.
+    // However, the client needs to arm the timer if the
+    // server might be blocked by the anti-amplification limit.
+    loss_detection_timer.cancel()
+    return
+
+  timeout, _ = GetPtoTimeAndSpace()
+  loss_detection_timer.update(timeout)
+</code></pre>
+<p><a href="#section-a.8-4">¶</a></p>
+<h2 id="A-9-On-Timeout"><a href="#A-9-On-Timeout" class="headerlink" title="A.9. On Timeout"></a><a href="#section-a.9">A.9. </a><a href="#name-on-timeout">On Timeout</a></h2><p>When the loss detection timer expires, the timer’s mode determines the action<br>to be performed.<a href="#section-a.9-1">¶</a></p>
+<p>Pseudocode for OnLossDetectionTimeout follows:<a href="#section-a.9-2">¶</a></p>
+<pre><code>OnLossDetectionTimeout():
+  earliest_loss_time, pn_space = GetLossTimeAndSpace()
+  if (earliest_loss_time != 0):
+    // Time threshold loss Detection
+    lost_packets = DetectAndRemoveLostPackets(pn_space)
+    assert(!lost_packets.empty())
+    OnPacketsLost(lost_packets)
+    SetLossDetectionTimer()
+    return
+
+  if (no ack-eliciting packets in flight):
+    assert(!PeerCompletedAddressValidation())
+    // Client sends an anti-deadlock packet: Initial is padded
+    // to earn more anti-amplification credit,
+    // a Handshake packet proves address ownership.
+    if (has Handshake keys):
+      SendOneAckElicitingHandshakePacket()
+    else:
+      SendOneAckElicitingPaddedInitialPacket()
+  else:
+    // PTO. Send new data if available, else retransmit old data.
+    // If neither is available, send a single PING frame.
+    _, pn_space = GetPtoTimeAndSpace()
+    SendOneOrTwoAckElicitingPackets(pn_space)
+
+  pto_count++
+  SetLossDetectionTimer()
+</code></pre>
+<p><a href="#section-a.9-3">¶</a></p>
+<h2 id="A-10-Detecting-Lost-Packets"><a href="#A-10-Detecting-Lost-Packets" class="headerlink" title="A.10. Detecting Lost Packets"></a><a href="#section-a.10">A.10. </a><a href="#name-detecting-lost-packets">Detecting Lost Packets</a></h2><p>DetectAndRemoveLostPackets is called every time an ACK is received or the time<br>threshold loss detection timer expires. This function operates on the<br>sent_packets for that packet number space and returns a list of packets newly<br>detected as lost.<a href="#section-a.10-1">¶</a></p>
+<p>Pseudocode for DetectAndRemoveLostPackets follows:<a href="#section-a.10-2">¶</a></p>
+<pre><code>DetectAndRemoveLostPackets(pn_space):
+  assert(largest_acked_packet[pn_space] != infinite)
+  loss_time[pn_space] = 0
+  lost_packets = []
+  loss_delay = kTimeThreshold * max(latest_rtt, smoothed_rtt)
+
+  // Minimum time of kGranularity before packets are deemed lost.
+  loss_delay = max(loss_delay, kGranularity)
+
+  // Packets sent before this time are deemed lost.
+  lost_send_time = now() - loss_delay
+
+  foreach unacked in sent_packets[pn_space]:
+    if (unacked.packet_number &gt; largest_acked_packet[pn_space]):
+      continue
+
+    // Mark packet as lost, or set time when it should be marked.
+    // Note: The use of kPacketThreshold here assumes that there
+    // were no sender-induced gaps in the packet number space.
+    if (unacked.time_sent &lt;= lost_send_time ||
+        largest_acked_packet[pn_space] &gt;=
+          unacked.packet_number + kPacketThreshold):
+      sent_packets[pn_space].remove(unacked.packet_number)
+      lost_packets.insert(unacked)
+    else:
+      if (loss_time[pn_space] == 0):
+        loss_time[pn_space] = unacked.time_sent + loss_delay
+      else:
+        loss_time[pn_space] = min(loss_time[pn_space],
+                                  unacked.time_sent + loss_delay)
+  return lost_packets
+</code></pre>
+<p><a href="#section-a.10-3">¶</a></p>
+<h2 id="A-11-Upon-Dropping-Initial-or-Handshake-Keys"><a href="#A-11-Upon-Dropping-Initial-or-Handshake-Keys" class="headerlink" title="A.11. Upon Dropping Initial or Handshake Keys"></a><a href="#section-a.11">A.11. </a><a href="#name-upon-dropping-initial-or-ha">Upon Dropping Initial or Handshake Keys</a></h2><p>When Initial or Handshake keys are discarded, packets from the space<br>are discarded and loss detection state is updated.<a href="#section-a.11-1">¶</a></p>
+<p>Pseudocode for OnPacketNumberSpaceDiscarded follows:<a href="#section-a.11-2">¶</a></p>
+<pre><code>OnPacketNumberSpaceDiscarded(pn_space):
+  assert(pn_space != ApplicationData)
+  RemoveFromBytesInFlight(sent_packets[pn_space])
+  sent_packets[pn_space].clear()
+  // Reset the loss detection and PTO timer
+  time_of_last_ack_eliciting_packet[pn_space] = 0
+  loss_time[pn_space] = 0
+  pto_count = 0
+  SetLossDetectionTimer()
+</code></pre>
+<p><a href="#section-a.11-3">¶</a></p>
+<h2 id="Appendix-B-Congestion-Control-Pseudocode"><a href="#Appendix-B-Congestion-Control-Pseudocode" class="headerlink" title="Appendix B. Congestion Control Pseudocode"></a><a href="#section-appendix.b">Appendix B. </a><a href="#name-congestion-control-pseudoco">Congestion Control Pseudocode</a></h2><p>We now describe an example implementation of the congestion controller described<br>in <a href="#congestion-control">Section 7</a>.<a href="#section-appendix.b-1">¶</a></p>
+<p>The pseudocode segments in this section are licensed as Code Components; see the<br>copyright notice.<a href="#section-appendix.b-2">¶</a></p>
+<h2 id="B-1-Constants-of-Interest"><a href="#B-1-Constants-of-Interest" class="headerlink" title="B.1. Constants of Interest"></a><a href="#section-b.1">B.1. </a><a href="#name-constants-of-interest-2">Constants of Interest</a></h2><p>Constants used in congestion control are based on a combination of RFCs, papers,<br>and common practice.<a href="#section-b.1-1">¶</a><br>kInitialWindow:<br>Default limit on the initial bytes in flight as described in <a href="#initial-cwnd">Section 7.2</a>.<a href="#section-b.1-2.2.1">¶</a><br>kMinimumWindow:<br>Minimum congestion window in bytes as described in <a href="#initial-cwnd">Section 7.2</a>.<a href="#section-b.1-2.4.1">¶</a><br>kLossReductionFactor:<br>Scaling factor applied to reduce the congestion window when a new loss event<br>is detected. <a href="#congestion-control">Section 7</a> recommends a value of 0.5.<a href="#section-b.1-2.6.1">¶</a><br>kPersistentCongestionThreshold:<br>Period of time for persistent congestion to be established, specified as a PTO<br>multiplier. <a href="#persistent-congestion">Section 7.6</a> recommends a value of 3.<a href="#section-b.1-2.8.1">¶</a></p>
+<h2 id="B-2-Variables-of-Interest"><a href="#B-2-Variables-of-Interest" class="headerlink" title="B.2. Variables of Interest"></a><a href="#section-b.2">B.2. </a><a href="#name-variables-of-interest-2">Variables of Interest</a></h2><p>Variables required to implement the congestion control mechanisms<br>are described in this section.<a href="#section-b.2-1">¶</a><br>max_datagram_size:<br>The sender’s current maximum payload size. This does not include UDP or IP<br>overhead.  The max datagram size is used for congestion window<br>computations. An endpoint sets the value of this variable based on its Path<br>Maximum Transmission Unit (PMTU; see <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc9000#section-14.2">Section 14.2</a> of [<a href="#QUIC-TRANSPORT">QUIC-TRANSPORT</a>]), with<br>a minimum value of 1200 bytes.<a href="#section-b.2-2.2.1">¶</a><br>ecn_ce_counters[kPacketNumberSpace]:<br>The highest value reported for the ECN-CE counter in the packet number space<br>by the peer in an ACK frame. This value is used to detect increases in the<br>reported ECN-CE counter.<a href="#section-b.2-2.4.1">¶</a><br>bytes_in_flight:<br>The sum of the size in bytes of all sent packets that contain at least one<br>ack-eliciting or PADDING frame and have not been acknowledged or declared<br>lost. The size does not include IP or UDP overhead, but does include the QUIC<br>header and Authenticated Encryption with Associated Data (AEAD) overhead.<br>Packets only containing ACK frames do not count toward bytes_in_flight to<br>ensure congestion control does not impede congestion feedback.<a href="#section-b.2-2.6.1">¶</a><br>congestion_window:<br>Maximum number of bytes allowed to be in flight.<a href="#section-b.2-2.8.1">¶</a><br>congestion_recovery_start_time:<br>The time the current recovery period started due to the detection of loss<br>or ECN. When a packet sent after this time is acknowledged, QUIC exits<br>congestion recovery.<a href="#section-b.2-2.10.1">¶</a><br>ssthresh:<br>Slow start threshold in bytes.  When the congestion window is below ssthresh,<br>the mode is slow start and the window grows by the number of bytes<br>acknowledged.<a href="#section-b.2-2.12.1">¶</a></p>
+<p>The congestion control pseudocode also accesses some of the variables from the<br>loss recovery pseudocode.<a href="#section-b.2-3">¶</a></p>
+<h2 id="B-3-Initialization"><a href="#B-3-Initialization" class="headerlink" title="B.3. Initialization"></a><a href="#section-b.3">B.3. </a><a href="#name-initialization-2">Initialization</a></h2><p>At the beginning of the connection, initialize the congestion control<br>variables as follows:<a href="#section-b.3-1">¶</a></p>
+<pre><code>congestion_window = kInitialWindow
+bytes_in_flight = 0
+congestion_recovery_start_time = 0
+ssthresh = infinite
+for pn_space in [ Initial, Handshake, ApplicationData ]:
+  ecn_ce_counters[pn_space] = 0
+</code></pre>
+<p><a href="#section-b.3-2">¶</a></p>
+<h2 id="B-4-On-Packet-Sent"><a href="#B-4-On-Packet-Sent" class="headerlink" title="B.4. On Packet Sent"></a><a href="#section-b.4">B.4. </a><a href="#name-on-packet-sent">On Packet Sent</a></h2><p>Whenever a packet is sent and it contains non-ACK frames, the packet<br>increases bytes_in_flight.<a href="#section-b.4-1">¶</a></p>
+<pre><code>OnPacketSentCC(sent_bytes):
+  bytes_in_flight += sent_bytes
+</code></pre>
+<p><a href="#section-b.4-2">¶</a></p>
+<h2 id="B-5-On-Packet-Acknowledgment"><a href="#B-5-On-Packet-Acknowledgment" class="headerlink" title="B.5. On Packet Acknowledgment"></a><a href="#section-b.5">B.5. </a><a href="#name-on-packet-acknowledgment">On Packet Acknowledgment</a></h2><p>This is invoked from loss detection’s OnAckReceived and is supplied with the<br>newly acked_packets from sent_packets.<a href="#section-b.5-1">¶</a></p>
+<p>In congestion avoidance, implementers that use an integer representation<br>for congestion_window should be careful with division and can use<br>the alternative approach suggested in <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc3465#section-2.1">Section 2.1</a> of [<a href="#RFC3465">RFC3465</a>].<a href="#section-b.5-2">¶</a></p>
+<pre><code>InCongestionRecovery(sent_time):
+  return sent_time &lt;= congestion_recovery_start_time
+
+OnPacketsAcked(acked_packets):
+  for acked_packet in acked_packets:
+    OnPacketAcked(acked_packet)
+
+OnPacketAcked(acked_packet):
+  if (!acked_packet.in_flight):
+    return;
+  // Remove from bytes_in_flight.
+  bytes_in_flight -= acked_packet.sent_bytes
+  // Do not increase congestion_window if application
+  // limited or flow control limited.
+  if (IsAppOrFlowControlLimited())
+    return
+  // Do not increase congestion window in recovery period.
+  if (InCongestionRecovery(acked_packet.time_sent)):
+    return
+  if (congestion_window &lt; ssthresh):
+    // Slow start.
+    congestion_window += acked_packet.sent_bytes
+  else:
+    // Congestion avoidance.
+    congestion_window +=
+      max_datagram_size * acked_packet.sent_bytes
+      / congestion_window
+</code></pre>
+<p><a href="#section-b.5-3">¶</a></p>
+<h2 id="B-6-On-New-Congestion-Event"><a href="#B-6-On-New-Congestion-Event" class="headerlink" title="B.6. On New Congestion Event"></a><a href="#section-b.6">B.6. </a><a href="#name-on-new-congestion-event">On New Congestion Event</a></h2><p>This is invoked from ProcessECN and OnPacketsLost when a new congestion event is<br>detected. If not already in recovery, this starts a recovery period and<br>reduces the slow start threshold and congestion window immediately.<a href="#section-b.6-1">¶</a></p>
+<pre><code>OnCongestionEvent(sent_time):
+  // No reaction if already in a recovery period.
+  if (InCongestionRecovery(sent_time)):
+    return
+
+  // Enter recovery period.
+  congestion_recovery_start_time = now()
+  ssthresh = congestion_window * kLossReductionFactor
+  congestion_window = max(ssthresh, kMinimumWindow)
+  // A packet can be sent to speed up loss recovery.
+  MaybeSendOnePacket()
+</code></pre>
+<p><a href="#section-b.6-2">¶</a></p>
+<h2 id="B-7-Process-ECN-Information"><a href="#B-7-Process-ECN-Information" class="headerlink" title="B.7. Process ECN Information"></a><a href="#section-b.7">B.7. </a><a href="#name-process-ecn-information">Process ECN Information</a></h2><p>This is invoked when an ACK frame with an ECN section is received from the peer.<a href="#section-b.7-1">¶</a></p>
+<pre><code>ProcessECN(ack, pn_space):
+  // If the ECN-CE counter reported by the peer has increased,
+  // this could be a new congestion event.
+  if (ack.ce_counter &gt; ecn_ce_counters[pn_space]):
+    ecn_ce_counters[pn_space] = ack.ce_counter
+    sent_time = sent_packets[ack.largest_acked].time_sent
+    OnCongestionEvent(sent_time)
+</code></pre>
+<p><a href="#section-b.7-2">¶</a></p>
+<h2 id="B-8-On-Packets-Lost"><a href="#B-8-On-Packets-Lost" class="headerlink" title="B.8. On Packets Lost"></a><a href="#section-b.8">B.8. </a><a href="#name-on-packets-lost">On Packets Lost</a></h2><p>This is invoked when DetectAndRemoveLostPackets deems packets lost.<a href="#section-b.8-1">¶</a></p>
+<pre><code>OnPacketsLost(lost_packets):
+  sent_time_of_last_loss = 0
+  // Remove lost packets from bytes_in_flight.
+  for lost_packet in lost_packets:
+    if lost_packet.in_flight:
+      bytes_in_flight -= lost_packet.sent_bytes
+      sent_time_of_last_loss =
+        max(sent_time_of_last_loss, lost_packet.time_sent)
+  // Congestion event if in-flight packets were lost
+  if (sent_time_of_last_loss != 0):
+    OnCongestionEvent(sent_time_of_last_loss)
+
+  // Reset the congestion window if the loss of these
+  // packets indicates persistent congestion.
+  // Only consider packets sent after getting an RTT sample.
+  if (first_rtt_sample == 0):
+    return
+  pc_lost = []
+  for lost in lost_packets:
+    if lost.time_sent &gt; first_rtt_sample:
+      pc_lost.insert(lost)
+  if (InPersistentCongestion(pc_lost)):
+    congestion_window = kMinimumWindow
+    congestion_recovery_start_time = 0
+</code></pre>
+<p><a href="#section-b.8-2">¶</a></p>
+<h2 id="B-9-Removing-Discarded-Packets-from-Bytes-in-Flight"><a href="#B-9-Removing-Discarded-Packets-from-Bytes-in-Flight" class="headerlink" title="B.9. Removing Discarded Packets from Bytes in Flight"></a><a href="#section-b.9">B.9. </a><a href="#name-removing-discarded-packets-">Removing Discarded Packets from Bytes in Flight</a></h2><p>When Initial or Handshake keys are discarded, packets sent in that space no<br>longer count toward bytes in flight.<a href="#section-b.9-1">¶</a></p>
+<p>Pseudocode for RemoveFromBytesInFlight follows:<a href="#section-b.9-2">¶</a></p>
+<pre><code>RemoveFromBytesInFlight(discarded_packets):
+  // Remove any unacknowledged packets from flight.
+  foreach packet in discarded_packets:
+    if packet.in_flight
+      bytes_in_flight -= size
+</code></pre>
+<p><a href="#section-b.9-3">¶</a></p>
+<h2 id="Contributors"><a href="#Contributors" class="headerlink" title="Contributors"></a><a href="#name-contributors">Contributors</a></h2><p>The IETF QUIC Working Group received an enormous amount of support from many<br>people. The following people provided substantive contributions to this<br>document:<a href="#section-appendix.c-1">¶</a></p>
+<ul>
+<li><p>Alessandro Ghedini<a href="#section-appendix.c-2.1.1">¶</a></p>
+</li>
+<li><p>Benjamin Saunders<a href="#section-appendix.c-2.2.1">¶</a></p>
+</li>
+<li><p>Gorry Fairhurst<a href="#section-appendix.c-2.3.1">¶</a></p>
+</li>
+<li><p>山本和彦 (Kazu Yamamoto)<a href="#section-appendix.c-2.4.1">¶</a></p>
+</li>
+<li><p>奥 一穂 (Kazuho Oku)<a href="#section-appendix.c-2.5.1">¶</a></p>
+</li>
+<li><p>Lars Eggert<a href="#section-appendix.c-2.6.1">¶</a></p>
+</li>
+<li><p>Magnus Westerlund<a href="#section-appendix.c-2.7.1">¶</a></p>
+</li>
+<li><p>Marten Seemann<a href="#section-appendix.c-2.8.1">¶</a></p>
+</li>
+<li><p>Martin Duke<a href="#section-appendix.c-2.9.1">¶</a></p>
+</li>
+<li><p>Martin Thomson<a href="#section-appendix.c-2.10.1">¶</a></p>
+</li>
+<li><p>Mirja Kühlewind<a href="#section-appendix.c-2.11.1">¶</a></p>
+</li>
+<li><p>Nick Banks<a href="#section-appendix.c-2.12.1">¶</a></p>
+</li>
+<li><p>Praveen Balasubramanian<a href="#section-appendix.c-2.13.1">¶</a></p>
+</li>
+</ul>
+<h2 id="Authors’-Addresses"><a href="#Authors’-Addresses" class="headerlink" title="Authors’ Addresses"></a><a href="#name-authors-addresses">Authors’ Addresses</a></h2><p>Jana Iyengar (editor)</p>
+<p>Fastly</p>
+<p>Email:<a href="mailto:jri.ietf@gmail.com">jri.ietf@gmail.com</a></p>
+<p>Ian Swett (editor)</p>
+<p>Google</p>
+<p>Email:<a href="mailto:ianswett@google.com">ianswett@google.com</a></p>
+
+  </div>
+</article>
+
+
+
+      </div>
+      
+       <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="https://flyaways.github.io/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://flyaways.github.io/">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RFC-9002"><span class="toc-number">1.</span> <span class="toc-text">RFC 9002</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#QUIC-Loss-Detection-and-Congestion-Control"><span class="toc-number">2.</span> <span class="toc-text">QUIC Loss Detection and Congestion Control</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Abstract"><span class="toc-number">2.1.</span> <span class="toc-text">Abstract</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Status-of-This-Memo"><span class="toc-number">2.2.</span> <span class="toc-text">Status of This Memo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Copyright-Notice"><span class="toc-number">2.3.</span> <span class="toc-text">Copyright Notice</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Table-of-Contents"><span class="toc-number">2.4.</span> <span class="toc-text">Table of Contents</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Introduction"><span class="toc-number">2.5.</span> <span class="toc-text">1. Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Conventions-and-Definitions"><span class="toc-number">2.6.</span> <span class="toc-text">2. Conventions and Definitions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Design-of-the-QUIC-Transmission-Machinery"><span class="toc-number">2.7.</span> <span class="toc-text">3. Design of the QUIC Transmission Machinery</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Relevant-Differences-between-QUIC-and-TCP"><span class="toc-number">2.8.</span> <span class="toc-text">4. Relevant Differences between QUIC and TCP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-Separate-Packet-Number-Spaces"><span class="toc-number">2.8.1.</span> <span class="toc-text">4.1. Separate Packet Number Spaces</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Monotonically-Increasing-Packet-Numbers"><span class="toc-number">2.8.2.</span> <span class="toc-text">4.2. Monotonically Increasing Packet Numbers</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-Clearer-Loss-Epoch"><span class="toc-number">2.8.3.</span> <span class="toc-text">4.3. Clearer Loss Epoch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-No-Reneging"><span class="toc-number">2.8.4.</span> <span class="toc-text">4.4. No Reneging</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-More-ACK-Ranges"><span class="toc-number">2.8.5.</span> <span class="toc-text">4.5. More ACK Ranges</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-6-Explicit-Correction-for-Delayed-Acknowledgments"><span class="toc-number">2.8.6.</span> <span class="toc-text">4.6. Explicit Correction for Delayed Acknowledgments</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-7-Probe-Timeout-Replaces-RTO-and-TLP"><span class="toc-number">2.8.7.</span> <span class="toc-text">4.7. Probe Timeout Replaces RTO and TLP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-8-The-Minimum-Congestion-Window-Is-Two-Packets"><span class="toc-number">2.8.8.</span> <span class="toc-text">4.8. The Minimum Congestion Window Is Two Packets</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-9-Handshake-Packets-Are-Not-Special"><span class="toc-number">2.8.9.</span> <span class="toc-text">4.9. Handshake Packets Are Not Special</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Estimating-the-Round-Trip-Time"><span class="toc-number">2.9.</span> <span class="toc-text">5. Estimating the Round-Trip Time</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-Generating-RTT-Samples"><span class="toc-number">2.9.1.</span> <span class="toc-text">5.1. Generating RTT Samples</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-Estimating-min-rtt"><span class="toc-number">2.9.2.</span> <span class="toc-text">5.2. Estimating min_rtt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-Estimating-smoothed-rtt-and-rttvar"><span class="toc-number">2.9.3.</span> <span class="toc-text">5.3. Estimating smoothed_rtt and rttvar</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Loss-Detection"><span class="toc-number">2.10.</span> <span class="toc-text">6. Loss Detection</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-Acknowledgment-Based-Detection"><span class="toc-number">2.10.1.</span> <span class="toc-text">6.1. Acknowledgment-Based Detection</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1-1-Packet-Threshold"><span class="toc-number">2.10.1.1.</span> <span class="toc-text">6.1.1. Packet Threshold</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1-2-Time-Threshold"><span class="toc-number">2.10.1.2.</span> <span class="toc-text">6.1.2. Time Threshold</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-Probe-Timeout"><span class="toc-number">2.10.2.</span> <span class="toc-text">6.2. Probe Timeout</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-1-Computing-PTO"><span class="toc-number">2.10.2.1.</span> <span class="toc-text">6.2.1. Computing PTO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-2-Handshakes-and-New-Paths"><span class="toc-number">2.10.2.2.</span> <span class="toc-text">6.2.2. Handshakes and New Paths</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#6-2-2-1-Before-Address-Validation"><span class="toc-number">2.10.2.2.1.</span> <span class="toc-text">6.2.2.1. Before Address Validation</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-3-Speeding-up-Handshake-Completion"><span class="toc-number">2.10.2.3.</span> <span class="toc-text">6.2.3. Speeding up Handshake Completion</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-4-Sending-Probe-Packets"><span class="toc-number">2.10.2.4.</span> <span class="toc-text">6.2.4. Sending Probe Packets</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-Handling-Retry-Packets"><span class="toc-number">2.10.3.</span> <span class="toc-text">6.3. Handling Retry Packets</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-Discarding-Keys-and-Packet-State"><span class="toc-number">2.10.4.</span> <span class="toc-text">6.4. Discarding Keys and Packet State</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-Congestion-Control"><span class="toc-number">2.11.</span> <span class="toc-text">7. Congestion Control</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-Explicit-Congestion-Notification"><span class="toc-number">2.11.1.</span> <span class="toc-text">7.1. Explicit Congestion Notification</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-Initial-and-Minimum-Congestion-Window"><span class="toc-number">2.11.2.</span> <span class="toc-text">7.2. Initial and Minimum Congestion Window</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-Congestion-Control-States"><span class="toc-number">2.11.3.</span> <span class="toc-text">7.3. Congestion Control States</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-3-1-Slow-Start"><span class="toc-number">2.11.3.1.</span> <span class="toc-text">7.3.1. Slow Start</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-3-2-Recovery"><span class="toc-number">2.11.3.2.</span> <span class="toc-text">7.3.2. Recovery</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-3-3-Congestion-Avoidance"><span class="toc-number">2.11.3.3.</span> <span class="toc-text">7.3.3. Congestion Avoidance</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-4-Ignoring-Loss-of-Undecryptable-Packets"><span class="toc-number">2.11.4.</span> <span class="toc-text">7.4. Ignoring Loss of Undecryptable Packets</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-5-Probe-Timeout"><span class="toc-number">2.11.5.</span> <span class="toc-text">7.5. Probe Timeout</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-6-Persistent-Congestion"><span class="toc-number">2.11.6.</span> <span class="toc-text">7.6. Persistent Congestion</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-6-1-Duration"><span class="toc-number">2.11.6.1.</span> <span class="toc-text">7.6.1. Duration</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-6-2-Establishing-Persistent-Congestion"><span class="toc-number">2.11.6.2.</span> <span class="toc-text">7.6.2. Establishing Persistent Congestion</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-6-3-Example"><span class="toc-number">2.11.6.3.</span> <span class="toc-text">7.6.3. Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-7-Pacing"><span class="toc-number">2.11.7.</span> <span class="toc-text">7.7. Pacing</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-8-Underutilizing-the-Congestion-Window"><span class="toc-number">2.11.8.</span> <span class="toc-text">7.8. Underutilizing the Congestion Window</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-Security-Considerations"><span class="toc-number">2.12.</span> <span class="toc-text">8. Security Considerations</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-Loss-and-Congestion-Signals"><span class="toc-number">2.12.1.</span> <span class="toc-text">8.1. Loss and Congestion Signals</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-Traffic-Analysis"><span class="toc-number">2.12.2.</span> <span class="toc-text">8.2. Traffic Analysis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-Misreporting-ECN-Markings"><span class="toc-number">2.12.3.</span> <span class="toc-text">8.3. Misreporting ECN Markings</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-References"><span class="toc-number">2.13.</span> <span class="toc-text">9. References</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-Normative-References"><span class="toc-number">2.13.1.</span> <span class="toc-text">9.1. Normative References</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-Informative-References"><span class="toc-number">2.13.2.</span> <span class="toc-text">9.2. Informative References</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Appendix-A-Loss-Recovery-Pseudocode"><span class="toc-number">2.14.</span> <span class="toc-text">Appendix A. Loss Recovery Pseudocode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-1-Tracking-Sent-Packets"><span class="toc-number">2.15.</span> <span class="toc-text">A.1. Tracking Sent Packets</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-1-1-Sent-Packet-Fields"><span class="toc-number">2.15.1.</span> <span class="toc-text">A.1.1. Sent Packet Fields</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-2-Constants-of-Interest"><span class="toc-number">2.16.</span> <span class="toc-text">A.2. Constants of Interest</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-3-Variables-of-Interest"><span class="toc-number">2.17.</span> <span class="toc-text">A.3. Variables of Interest</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-4-Initialization"><span class="toc-number">2.18.</span> <span class="toc-text">A.4. Initialization</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-5-On-Sending-a-Packet"><span class="toc-number">2.19.</span> <span class="toc-text">A.5. On Sending a Packet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-6-On-Receiving-a-Datagram"><span class="toc-number">2.20.</span> <span class="toc-text">A.6. On Receiving a Datagram</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-7-On-Receiving-an-Acknowledgment"><span class="toc-number">2.21.</span> <span class="toc-text">A.7. On Receiving an Acknowledgment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-8-Setting-the-Loss-Detection-Timer"><span class="toc-number">2.22.</span> <span class="toc-text">A.8. Setting the Loss Detection Timer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-9-On-Timeout"><span class="toc-number">2.23.</span> <span class="toc-text">A.9. On Timeout</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-10-Detecting-Lost-Packets"><span class="toc-number">2.24.</span> <span class="toc-text">A.10. Detecting Lost Packets</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-11-Upon-Dropping-Initial-or-Handshake-Keys"><span class="toc-number">2.25.</span> <span class="toc-text">A.11. Upon Dropping Initial or Handshake Keys</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Appendix-B-Congestion-Control-Pseudocode"><span class="toc-number">2.26.</span> <span class="toc-text">Appendix B. Congestion Control Pseudocode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-1-Constants-of-Interest"><span class="toc-number">2.27.</span> <span class="toc-text">B.1. Constants of Interest</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-2-Variables-of-Interest"><span class="toc-number">2.28.</span> <span class="toc-text">B.2. Variables of Interest</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-3-Initialization"><span class="toc-number">2.29.</span> <span class="toc-text">B.3. Initialization</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-4-On-Packet-Sent"><span class="toc-number">2.30.</span> <span class="toc-text">B.4. On Packet Sent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-5-On-Packet-Acknowledgment"><span class="toc-number">2.31.</span> <span class="toc-text">B.5. On Packet Acknowledgment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-6-On-New-Congestion-Event"><span class="toc-number">2.32.</span> <span class="toc-text">B.6. On New Congestion Event</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-7-Process-ECN-Information"><span class="toc-number">2.33.</span> <span class="toc-text">B.7. Process ECN Information</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-8-On-Packets-Lost"><span class="toc-number">2.34.</span> <span class="toc-text">B.8. On Packets Lost</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-9-Removing-Discarded-Packets-from-Bytes-in-Flight"><span class="toc-number">2.35.</span> <span class="toc-text">B.9. Removing Discarded Packets from Bytes in Flight</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Contributors"><span class="toc-number">2.36.</span> <span class="toc-text">Contributors</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Authors%E2%80%99-Addresses"><span class="toc-number">2.37.</span> <span class="toc-text">Authors’ Addresses</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://flyaways.github.io/2021/06/18/rfc9002/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://flyaways.github.io/2021/06/18/rfc9002/&text=rfc9002"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://flyaways.github.io/2021/06/18/rfc9002/&title=rfc9002"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://flyaways.github.io/2021/06/18/rfc9002/&is_video=false&description=rfc9002"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=rfc9002&body=Check out this article: https://flyaways.github.io/2021/06/18/rfc9002/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://flyaways.github.io/2021/06/18/rfc9002/&title=rfc9002"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://flyaways.github.io/2021/06/18/rfc9002/&title=rfc9002"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://flyaways.github.io/2021/06/18/rfc9002/&title=rfc9002"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://flyaways.github.io/2021/06/18/rfc9002/&title=rfc9002"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://flyaways.github.io/2021/06/18/rfc9002/&name=rfc9002&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick='$("#toc-footer").toggle();return false;'><i class="fa fa-list fa-lg" aria-hidden="true"></i> TOC</a></li>
+        <li id="share"><a class="icon" href="#" onclick='$("#share-footer").toggle();return false;'><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> Share</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a></li>
+        <li id="menu"><a class="icon" href="#" onclick='$("#nav-footer").toggle();return false;'><i class="fa fa-bars fa-lg" aria-hidden="true"></i> Menu</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+      
+      <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2021 John Doe
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="https://flyaways.github.io/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://flyaways.github.io/">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+      
+<script src="/lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- Google Analytics -->
+
+<!-- Disqus Comments -->
+
+
+    </div>
+</body>
+</html>
